@@ -434,3 +434,4 @@ dist/
 .env
 .env.local
 npm-debug.log*
+.idea/
