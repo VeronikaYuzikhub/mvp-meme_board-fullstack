@@ -1,6 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet("/", () => "MVP Back-End is working! ");
+app.MapGet("/", () => "MVP Back-End is working!");
 
 app.Run();
