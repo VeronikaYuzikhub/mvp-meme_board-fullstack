@@ -1,4 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using backend.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// реєструємо у контейнері сервісів
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(connectionString));
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -15,6 +24,9 @@ app.MapGet("/", () => {
     app.Logger.LogInformation("Запит до головного ендпоінта {AppName}", appName);
     return $"{welcome} ({appName}, версія {version})";
 });
+
+app.MapGet("/memes", async (AppDbContext db) =>
+    await db.Memes.ToListAsync());
 
 app.MapGet("/boom", () =>
 {
