@@ -27,14 +27,14 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Meme Board API: РЅРµРѕР±СЂРѕР±Р»РµРЅР° РїРѕРјРёР»РєР° РїС–Рґ С‡Р°СЃ Р·Р°РїРёС‚Сѓ {Path}", context.Request.Path);
+            _logger.LogError(ex, "Meme Board API: необроблена помилка під час запиту {Path}", context.Request.Path);
 
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 
             var error = new
             {
-                error = "РЎС‚Р°Р»Р°СЃСЏ РІРЅСѓС‚СЂС–С€РЅСЏ РїРѕРјРёР»РєР° СЃРµСЂРІРµСЂР° Meme Board",
+                error = "Сталася внутрішня помилка сервера Meme Board",
                 status = 500
             };
 
