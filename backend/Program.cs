@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using backend.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,36 +92,68 @@ app.MapGet("/", () => {
 
 // READ: all memes
 app.MapGet("/memes", async (AppDbContext db) =>
-    await db.Memes.ToListAsync())
-    .RequireAuthorization()
-    .WithTags("Memes");
+{
+    var memes = await db.Memes
+        .Include(m => m.User)
+        .OrderByDescending(m => m.CreatedAt)
+        .ToListAsync();
+
+    return Results.Ok(memes.Select(m => new MemeResponseDto(
+        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "")));
+})
+.WithTags("Memes");
 
 // READ: one meme by id
-app.MapGet("/memes/{id}", async(int id, AppDbContext db) =>
-    await db.Memes.FindAsync(id) is Meme meme
-    ? Results.Ok(meme)
-    : Results.NotFound())
-    .RequireAuthorization()
-    .WithTags("Memes");
+app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
+{
+    if (await db.Memes.FindAsync(id) is not Meme meme)
+        return Results.NotFound();
+
+    await db.Entry(meme).Reference(m => m.User).LoadAsync();
+    return Results.Ok(new MemeResponseDto(
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? ""));
+})
+.WithTags("Memes");
 
 // CREATE: add new meme
-app.MapPost("/memes", async (Meme meme, AppDbContext db) =>
+app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal principal) =>
 {
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
+    var meme = new Meme
+    {
+        Title = dto.Title,
+        ImageUrl = dto.ImageUrl,
+        UserId = userId,
+        CreatedAt = DateTime.UtcNow
+    };
+
     db.Memes.Add(meme);
     await db.SaveChangesAsync();
-    return Results.Created($"/memes/{meme.Id}", meme);
+
+    await db.Entry(meme).Reference(m => m.User).LoadAsync();
+    return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? ""));
 })
 .RequireAuthorization()
 .WithTags("Memes");
 
 // UPDATE: edit existing meme
-app.MapPut("/memes/{id}", async (int id, Meme input, AppDbContext db) =>
+app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, ClaimsPrincipal principal) =>
 {
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
     var meme = await db.Memes.FindAsync(id);
     if (meme is null) return Results.NotFound();
+    if (meme.UserId != userId) return Results.Forbid();
 
-    meme.Title = input.Title;
-    meme.ImageUrl = input.ImageUrl;
+    meme.Title = dto.Title;
+    meme.ImageUrl = dto.ImageUrl;
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
@@ -128,10 +161,15 @@ app.MapPut("/memes/{id}", async (int id, Meme input, AppDbContext db) =>
 .WithTags("Memes");
 
 // DELETE: remove meme
-app.MapDelete("/memes/{id}", async (int id, AppDbContext db) =>
+app.MapDelete("/memes/{id}", async (int id, AppDbContext db, ClaimsPrincipal principal) =>
 {
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
     var meme = await db.Memes.FindAsync(id);
     if (meme is null) return Results.NotFound();
+    if (meme.UserId != userId) return Results.Forbid();
 
     db.Memes.Remove(meme);
     await db.SaveChangesAsync();

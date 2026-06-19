@@ -16,9 +16,16 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Initial seed data for development and lab demo (replaced by UI later)
-        modelBuilder.Entity<Meme>().HasData(
+        modelBuilder.Entity<Meme>()
+            .HasOne(m => m.User)
+            .WithMany()
+            .HasForeignKey(m => m.UserId);
+            
+            
+          /*    .HasData(
             new Meme { Id = 1, Title = "Коли дедлайн завтра", ImageUrl = "https://i.imgflip.com/1bij.jpg" },
             new Meme { Id = 2, Title = "Програміст vs Bug", ImageUrl = "https://i.imgflip.com/26am.jpg" },
             new Meme { Id = 3, Title = "Meme Board MVP", ImageUrl = "https://i.imgflip.com/aujac7.jpg" });
+          */
     }
 }
