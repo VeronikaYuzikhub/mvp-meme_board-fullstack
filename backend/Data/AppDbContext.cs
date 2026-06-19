@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Meme> Memes => Set<Meme>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<MemeLike> MemeLikes => Set<MemeLike>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,12 +21,22 @@ public class AppDbContext : DbContext
             .HasOne(m => m.User)
             .WithMany()
             .HasForeignKey(m => m.UserId);
-            
-            
-          /*    .HasData(
-            new Meme { Id = 1, Title = "Коли дедлайн завтра", ImageUrl = "https://i.imgflip.com/1bij.jpg" },
-            new Meme { Id = 2, Title = "Програміст vs Bug", ImageUrl = "https://i.imgflip.com/26am.jpg" },
-            new Meme { Id = 3, Title = "Meme Board MVP", ImageUrl = "https://i.imgflip.com/aujac7.jpg" });
-          */
+        modelBuilder.Entity<MemeLike>()
+        .HasOne(l => l.User)
+        .WithMany()
+        .HasForeignKey(l => l.UserId);
+        modelBuilder.Entity<MemeLike>()
+            .HasOne(l => l.Meme)
+            .WithMany(m => m.Likes)
+            .HasForeignKey(l => l.MemeId);
+        modelBuilder.Entity<MemeLike>()
+            .HasIndex(l => new { l.UserId, l.MemeId })
+            .IsUnique();
+
+        /*    .HasData(
+          new Meme { Id = 1, Title = "Коли дедлайн завтра", ImageUrl = "https://i.imgflip.com/1bij.jpg" },
+          new Meme { Id = 2, Title = "Програміст vs Bug", ImageUrl = "https://i.imgflip.com/26am.jpg" },
+          new Meme { Id = 3, Title = "Meme Board MVP", ImageUrl = "https://i.imgflip.com/aujac7.jpg" });
+        */
     }
 }

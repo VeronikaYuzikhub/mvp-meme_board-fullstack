@@ -91,15 +91,27 @@ app.MapGet("/", () => {
 .WithTags("Service");
 
 // READ: all memes
-app.MapGet("/memes", async (AppDbContext db) =>
+app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false) =>
 {
-    var memes = await db.Memes
+    var query = db.Memes
         .Include(m => m.User)
+        .Include(m => m.Likes)
+        .AsQueryable();
+
+    if (mine)
+    {
+        var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdStr, out var userId))
+            return Results.Unauthorized();
+        query = query.Where(m => m.UserId == userId);
+    }
+
+    var memes = await query
         .OrderByDescending(m => m.CreatedAt)
         .ToListAsync();
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
-        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "")));
+        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count)));
 })
 .WithTags("Memes");
 
@@ -110,8 +122,9 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
         return Results.NotFound();
 
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
+    await db.Entry(meme).Collection(m => m.Likes).LoadAsync();
     return Results.Ok(new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? ""));
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count));
 })
 .WithTags("Memes");
 
@@ -136,7 +149,7 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
 
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? ""));
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", 0));
 })
 .RequireAuthorization()
 .WithTags("Memes");
@@ -173,6 +186,45 @@ app.MapDelete("/memes/{id}", async (int id, AppDbContext db, ClaimsPrincipal pri
 
     db.Memes.Remove(meme);
     await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.RequireAuthorization()
+.WithTags("Memes");
+
+// LIKE: add like to meme
+app.MapPost("/memes/{id}/like", async (int id, AppDbContext db, ClaimsPrincipal principal) =>
+{
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
+    if (await db.Memes.FindAsync(id) is not Meme meme)
+        return Results.NotFound();
+
+    if (await db.MemeLikes.AnyAsync(l => l.MemeId == id && l.UserId == userId))
+        return Results.NoContent();
+
+    db.MemeLikes.Add(new MemeLike { UserId = userId, MemeId = id });
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.RequireAuthorization()
+.WithTags("Memes");
+
+// UNLIKE: remove like from meme
+app.MapDelete("/memes/{id}/like", async (int id, AppDbContext db, ClaimsPrincipal principal) =>
+{
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
+    var like = await db.MemeLikes.FirstOrDefaultAsync(l => l.MemeId == id && l.UserId == userId);
+    if (like is not null)
+    {
+        db.MemeLikes.Remove(like);
+        await db.SaveChangesAsync();
+    }
     return Results.NoContent();
 })
 .RequireAuthorization()
@@ -249,6 +301,3 @@ app.MapGet("/auth/me", (ClaimsPrincipal principal) =>
     .WithTags("Auth");
 
 app.Run();
-
-record RegisterDto(string Name, string Email, string Password);
-record LoginDto(string Email, string Password);
