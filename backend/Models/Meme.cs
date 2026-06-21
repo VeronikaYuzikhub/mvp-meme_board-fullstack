@@ -11,4 +11,6 @@ public class Meme
     public ICollection<MemeLike> Likes { get; set; } = new List<MemeLike>();
     public int? CategoryId { get; set; }
     public Category? Category { get; set; }
+    public string? ImageBase64 { get; set; }
+    public string ImageContentType { get; set; } = "image/jpeg/png";
 }

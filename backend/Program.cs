@@ -1,14 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using backend.Data;
+using backend.DTOs;
 using backend.Models;
-using Microsoft.OpenApi;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO.Compression;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using backend.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,6 +76,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseStaticFiles();
+
 var appName = app.Configuration["AppSettings:AppName"];
 var welcome = app.Configuration["AppSettings:WelcomeMessage"];
 var version = app.Configuration["AppSettings:Version"];
@@ -118,8 +121,37 @@ app.MapPost("/categories", async (CreateCategoryDto dto, AppDbContext db) =>
 .RequireAuthorization()
 .WithTags("Categories");
 
+//CREATE: upload image
+app.MapPost("/upload", async(ClaimsPrincipal principal, IFormFile formFile, AppDbContext db) => 
+{
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (!int.TryParse(userIdStr, out var userId))
+        return Results.Unauthorized();
+
+    if (formFile is null || formFile.Length == 0)
+        return Results.BadRequest("File is not choosen");
+
+    if (formFile.Length > 2097152)
+        return Results.BadRequest("The file is too large");
+
+    var allowed = new[] { "image/jpeg", "image/png" };
+    if (!allowed.Contains(formFile.ContentType))
+        return Results.BadRequest("Only jpeg or png");
+
+    using var ms = new MemoryStream();
+    await formFile.CopyToAsync(ms);
+    var base64 = Convert.ToBase64String(ms.ToArray());
+
+    return Results.Ok(new { imageBase64 = base64, imageContentType = formFile.ContentType });
+
+})
+.RequireAuthorization()
+.DisableAntiforgery()
+.WithTags("Upload");
+
 // READ: all memes
-app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false, string category = null) =>
+app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false, string? category = null, string? Title = null) =>
 {
     var query = db.Memes
         .Include(m => m.User)
@@ -138,12 +170,15 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
     if(!string.IsNullOrWhiteSpace(category))
         query = query.Where(m => m.Category != null && m.Category.Name == category);
 
+    if (!string.IsNullOrWhiteSpace(Title))
+        query = query.Where(m => m.Title.ToUpper().Contains(Title.ToUpper()));
+
     var memes = await query
         .OrderByDescending(m => m.CreatedAt)
         .ToListAsync();
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
-        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
+        m.Id, m.Title, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
 })
 .WithTags("Memes");
 
@@ -157,7 +192,7 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
     await db.Entry(meme).Collection(m => m.Likes).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Ok(new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
 })
 .WithTags("Memes");
 
@@ -172,7 +207,8 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     var meme = new Meme
     {
         Title = dto.Title,
-        ImageUrl = dto.ImageUrl,
+        ImageBase64 = dto.ImageBase64,
+        ImageContentType = dto.ImageContentType,
         UserId = userId,
         CreatedAt = DateTime.UtcNow,
         CategoryId = dto.CategoryId,
@@ -184,7 +220,7 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
 })
 .RequireAuthorization()
 .WithTags("Memes");

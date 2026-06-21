@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using backend.Models;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
@@ -23,9 +24,9 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(m => m.UserId);
         modelBuilder.Entity<MemeLike>()
-        .HasOne(l => l.User)
-        .WithMany()
-        .HasForeignKey(l => l.UserId);
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId);
         modelBuilder.Entity<MemeLike>()
             .HasOne(l => l.Meme)
             .WithMany(m => m.Likes)
