@@ -9,4 +9,6 @@ public class Meme
     public DateTime CreatedAt { get; set; }
     public User? User { get; set; }
     public ICollection<MemeLike> Likes { get; set; } = new List<MemeLike>();
+    public int? CategoryId { get; set; }
+    public Category? Category { get; set; }
 }

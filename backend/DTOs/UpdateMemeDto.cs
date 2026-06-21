@@ -1,3 +1,3 @@
 namespace backend.DTOs;
 
-public record UpdateMemeDto(string Title, string ImageUrl);
+public record UpdateMemeDto(string Title, string ImageUrl, int CategoryId);

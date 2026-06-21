@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Meme> Memes => Set<Meme>();
     public DbSet<User> Users => Set<User>();
     public DbSet<MemeLike> MemeLikes => Set<MemeLike>();
+    public DbSet<Category> Categories => Set<Category>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +32,13 @@ public class AppDbContext : DbContext
             .HasForeignKey(l => l.MemeId);
         modelBuilder.Entity<MemeLike>()
             .HasIndex(l => new { l.UserId, l.MemeId })
+            .IsUnique();
+        modelBuilder.Entity<Meme>()
+            .HasOne(m => m.Category)
+            .WithMany(c => c.Memes)
+            .HasForeignKey(m => m.CategoryId);
+        modelBuilder.Entity<Category>()
+            .HasIndex(c => c.Name)
             .IsUnique();
 
         /*    .HasData(

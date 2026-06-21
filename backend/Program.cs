@@ -90,12 +90,41 @@ app.MapGet("/", () => {
 })
 .WithTags("Service");
 
+// READ: all categories
+app.MapGet("/categories", async (AppDbContext db) =>
+{
+    var categories = await db.Categories.OrderBy(c => c.Name).ToListAsync();
+    return Results.Ok(categories.Select(c => new CategoryResponseDto(c.Id, c.Name)));
+})
+.WithTags("Categories");
+
+// CREATE: add category (via API, not seed)
+app.MapPost("/categories", async (CreateCategoryDto dto, AppDbContext db) =>
+{
+    var name = dto.Name.Trim();
+    if (string.IsNullOrWhiteSpace(name))
+        return Results.BadRequest("Назва категорії не може бути порожньою");
+
+    if (await db.Categories.AnyAsync(c => c.Name == name))
+        return Results.Conflict("Категорія з такою назвою вже існує");
+
+    var category = new Category { Name = name };
+    db.Categories.Add(category);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/categories/{category.Id}",
+        new CategoryResponseDto(category.Id, category.Name));
+})
+.RequireAuthorization()
+.WithTags("Categories");
+
 // READ: all memes
-app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false) =>
+app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false, string category = null) =>
 {
     var query = db.Memes
         .Include(m => m.User)
         .Include(m => m.Likes)
+        .Include(m => m.Category)
         .AsQueryable();
 
     if (mine)
@@ -106,12 +135,15 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
         query = query.Where(m => m.UserId == userId);
     }
 
+    if(!string.IsNullOrWhiteSpace(category))
+        query = query.Where(m => m.Category != null && m.Category.Name == category);
+
     var memes = await query
         .OrderByDescending(m => m.CreatedAt)
         .ToListAsync();
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
-        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count)));
+        m.Id, m.Title, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
 })
 .WithTags("Memes");
 
@@ -123,8 +155,9 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
 
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     await db.Entry(meme).Collection(m => m.Likes).LoadAsync();
+    await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Ok(new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count));
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
 })
 .WithTags("Memes");
 
@@ -141,15 +174,17 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
         Title = dto.Title,
         ImageUrl = dto.ImageUrl,
         UserId = userId,
-        CreatedAt = DateTime.UtcNow
+        CreatedAt = DateTime.UtcNow,
+        CategoryId = dto.CategoryId,
     };
 
     db.Memes.Add(meme);
     await db.SaveChangesAsync();
 
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
+    await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", 0));
+        meme.Id, meme.Title, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
 })
 .RequireAuthorization()
 .WithTags("Memes");
@@ -167,6 +202,7 @@ app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, Cla
 
     meme.Title = dto.Title;
     meme.ImageUrl = dto.ImageUrl;
+    meme.CategoryId = dto.CategoryId;
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
