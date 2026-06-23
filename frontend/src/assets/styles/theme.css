@@ -1,0 +1,42 @@
+:root {
+  --bs-primary: #8f72ff;
+  --bs-primary-rgb: 143, 114, 255;
+  --brand-purple: #8f72ff;
+  --light-purple: #a48fff;
+
+  --hero-bg: #ffffff;
+  --hero-dot-opacity: 0.22;
+}
+
+.hero-accent {
+  color: var(--brand-purple);
+}
+
+html,
+body,
+#app {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--hero-bg);
+}
+
+.btn-meme {
+  background-color: var(--brand-purple);
+  border-color: var(--brand-purple);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.btn-meme i {
+  color: #fff;
+}
+.btn-meme:hover {
+  background-color: var(--light-purple);
+  border-color: var(--light-purple);
+  color: #fff;
+}
