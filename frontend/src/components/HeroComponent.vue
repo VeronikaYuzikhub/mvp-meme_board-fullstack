@@ -19,14 +19,14 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
             </p>
             <div class="d-flex flex-wrap gap-3">
               <router-link class="nav-link btn btn-meme btn-lg d-inline-flex align-items-center" aria-current="page" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
-              <button type="button" class="btn btn-lg hero-btn-outline d-inline-flex align-items-center">
+              <router-link class="btn btn-lg hero-btn-outline d-inline-flex align-items-center" to="/about">
                 <svg class="hero-info-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/>
                   <circle cx="12" cy="8" r="0.75" fill="currentColor"/>
                   <path d="M12 11v5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
                 </svg>
                 Learn more
-              </button>
+              </router-link>
             </div>
         </div>
 
