@@ -1,4 +1,5 @@
 :root {
+  --light-accent: #8e72ff4f;
   --bs-primary: #8f72ff;
   --bs-primary-rgb: 143, 114, 255;
   --brand-purple: #8f72ff;
@@ -39,4 +40,44 @@ body {
   background-color: var(--light-purple);
   border-color: var(--light-purple);
   color: #fff;
+}
+
+.app-line {
+  border: none;
+  height: 1px;
+  background: rgb(230, 230, 232);
+  opacity: 0.8;
+}
+
+.mockup-search {
+  background:rgb(248, 248, 250);
+  border-color:rgb(238, 238, 240);
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.header-search-wrap {
+  position: relative;
+  width: 220px;
+}
+
+.header-search-input {
+  background: rgb(248, 248, 250);
+  border-color: rgb(238, 238, 240);
+  border-radius: 7px;
+  padding: 7px 2.25rem 7px 14px;
+  font-size: 0.85rem;
+  height: 38px;
+}
+
+.header-search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.85rem;
+  pointer-events: none;
 }

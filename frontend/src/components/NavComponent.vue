@@ -4,7 +4,7 @@
 
 <template>
   <div class="container">
-    <nav class="navbar  navbar-expand-lg d-flex align-items-center justify-content-between">
+    <nav class="navbar navbar-expand-lg d-flex align-items-center justify-content-between py-2">
       <div class="d-flex align-items-center gap-4">
         <router-link class="navbar-brand d-flex align-items-center gap-2 mb-0 text-decoration-none text-dark flex-shrink-0" to="/">
           <i class="fa-regular fa-face-smile fs-4" style="color: var(--brand-purple);"></i>
@@ -27,18 +27,10 @@
           </ul>
         </div>
       </div>
-      <button type="button" class="btn btn-meme btn-primary .btn-meme:hover justify-content-end"><i class="fa-solid fa-plus me-2"></i>Add meme</button>
+      <div class="d-flex align-items-center flex-shrink-0">
+        <slot name="action" />
+      </div>
     </nav>
-    <hr class="nav-line m-0">
-    
+    <hr class="app-line m-0" />
   </div>
 </template>
-
-<style scoped>
-.nav-line {
-  border: none;
-  height: 1px;
-  background:rgb(230, 230, 232);
-  opacity: 0.8;
-}
-</style>

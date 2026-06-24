@@ -13,14 +13,12 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
       <div class="row align-items-center">
         <div class="col-lg-6">
             <h1 class="display-3 hero-title fw-bold mb-0">Share memes,</h1>
-            <h1 class="display-3 hero-title fw-bold mb-0 hero-accent">simply.</h1>
+            <h1 class="display-3 hero-title fw-bold mb-0 hero-accent">without the mess</h1>
             <p class="text-muted lead mt-3 mb-4">
               Create, discover, and share memes with your friends and the world.
             </p>
             <div class="d-flex flex-wrap gap-3">
-              <button type="button" class="btn btn-meme btn-lg d-inline-flex align-items-center">
-                <i class="fa-solid fa-rocket me-2"></i>Explore memes
-              </button>
+              <router-link class="nav-link btn btn-meme btn-lg d-inline-flex align-items-center" aria-current="page" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
               <button type="button" class="btn btn-lg hero-btn-outline d-inline-flex align-items-center">
                 <svg class="hero-info-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/>

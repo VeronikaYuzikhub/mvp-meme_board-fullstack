@@ -25,7 +25,9 @@ const memeCards = [
 </script>
 
 <template>
-  <div class="app-mockup rounded-4 shadow">
+  <div class="app-mockup rounded-4 shadow" data-aos="flip-left"
+     data-aos-easing="ease-out-cubic"
+     data-aos-duration="2000">
     <div class="app-mockup_dots">
       <span class="window-dot window-dot-red"></span>
       <span class="window-dot window-dot-yellow"></span>

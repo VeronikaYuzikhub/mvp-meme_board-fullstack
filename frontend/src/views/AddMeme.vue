@@ -1,17 +1,13 @@
 <script setup>
 import FooterComponent from '@/components/FooterComponent.vue'
-import HeroComponent from '@/components/HeroComponent.vue'
+import AddMemeComponent from '@/components/AddMemeComponent.vue'
 import NavComponent from '@/components/NavComponent.vue'
 </script>
 
 <template>
-  <NavComponent>
-    <template #action>
-      <button type="button" class="btn btn-meme flex-shrink-0">Log in</button>
-    </template>
-  </NavComponent>
+  <NavComponent/>
   <main class="flex-grow-1 min-w-0">
-    <HeroComponent />
+    <AddMemeComponent />
   </main>
   <FooterComponent />
 </template>

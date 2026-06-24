@@ -1,20 +1,22 @@
 <script setup>
-import FooterComponent from '@/components/FooterComponent.vue';
-import HeaderComponent from '@/components/HeaderComponent.vue';
-import AboutComponent from '@/components/AboutComponent.vue';
-import NavComponent from '@/components/NavComponent.vue';
-
+import AboutComponent from '@/components/AboutComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import NavActionComponent from '@/components/NavActionComponent.vue'
+import NavComponent from '@/components/NavComponent.vue'
 </script>
 
 <template>
-    <NavComponent />
-    <HeaderComponent />
-    <main class="flex-grow-1">
-        <AboutComponent />
-    </main>
-    <FooterComponent />
+  <NavComponent>
+    <template #action>
+      <NavActionComponent />
+    </template>
+  </NavComponent>
+  <main class="flex-grow-1">
+    <AboutComponent />
+  </main>
+  <FooterComponent />
 </template>
-
 <style scoped>
 
 </style>
+
