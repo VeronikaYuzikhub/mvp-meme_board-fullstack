@@ -13,6 +13,14 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // register the data context and provider in the service container
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -64,6 +72,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+app.UseCors();
+
 //генерація опису (джсон) та інтерактивної сторінки SwaggerUI
 app.UseSwagger();
 app.UseSwaggerUI(options => {
@@ -97,7 +107,7 @@ app.MapGet("/", () => {
 app.MapGet("/categories", async (AppDbContext db) =>
 {
     var categories = await db.Categories.OrderBy(c => c.Name).ToListAsync();
-    return Results.Ok(categories.Select(c => new CategoryResponseDto(c.Id, c.Name)));
+    return Results.Ok(categories.Select(c => new CategoryResponseDto(c.Id, c.Name, c.Icon)));
 })
 .WithTags("Categories");
 
@@ -106,17 +116,18 @@ app.MapPost("/categories", async (CreateCategoryDto dto, AppDbContext db) =>
 {
     var name = dto.Name.Trim();
     if (string.IsNullOrWhiteSpace(name))
+    if (string.IsNullOrWhiteSpace(name))
         return Results.BadRequest("Назва категорії не може бути порожньою");
 
     if (await db.Categories.AnyAsync(c => c.Name == name))
         return Results.Conflict("Категорія з такою назвою вже існує");
 
-    var category = new Category { Name = name };
+    var category = new Category { Name = name, Icon = dto.Icon.Trim() };
     db.Categories.Add(category);
     await db.SaveChangesAsync();
 
     return Results.Created($"/categories/{category.Id}",
-        new CategoryResponseDto(category.Id, category.Name));
+        new CategoryResponseDto(category.Id, category.Name, category.Icon));
 })
 .RequireAuthorization()
 .WithTags("Categories");
