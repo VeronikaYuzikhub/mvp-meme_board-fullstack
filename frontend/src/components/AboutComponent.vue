@@ -148,36 +148,40 @@ function resetSteps() {
     </section>
 
     <section class="container py-5">
-      <div class="row align-items-center g-4">
-        <div class="col-lg-6" data-aos="fade-right">
+      <div class="row align-items-center justify-content-center g-6 about-duo-row mx-auto">
+        <div class="col-lg-5" data-aos="fade-right">
           <p class="text-uppercase small hero-accent fw-semibold mb-2">Not like the others</p>
           <h2 class="fw-bold mb-3">
             No trends.<br />
             No pressure.<br />
             <span class="hero-accent">Just memes.</span>
           </h2>
-          <ul class="text-muted mb-0">
+          <ul class="text-muted mb-0 mb-lg-4">
             <li>No chasing virality</li>
             <li>Simple feed and categories</li>
             <li>Upload, laugh, repeat</li>
           </ul>
         </div>
-        <div class="col-lg-6 position-relative card add-meme-card p-4">
-        <div class="d-flex flex-column flex-lg-row align-items-left gap-4 text-center text-lg-start" data-aos="fade-up">
-          <div class="about-avatar">V</div>
-          <div class="flex-grow-1">
-            <h3 class="h5 fw-bold mb-2">Veronika</h3>
-            <p class="text-muted mb-3 mb-lg-0">Author this project</p>
+        <div class="col-lg-4">
+          <div class="about-author-card add-meme-card p-4" data-aos="fade-up">
+            <div class="d-flex justify-content-center">
+              <div class="d-flex flex-column align-items-center text-center about-author">
+                <div class="about-avatar">V</div>
+                <div class="about-author-info">
+                  <h3 class="h5 fw-bold mb-2">Veronika</h3>
+                  <p class="text-muted mb-3">Author this project</p>
+                </div>
+                <a
+                  class="btn btn-meme"
+                  href="https://www.linkedin.com/in/veronika-yuzik-9292b735b"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  LinkedIn
+                </a>
+              </div>
+            </div>
           </div>
-          <a
-            class="btn btn-meme align-self-start flex-shrink-0"
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="">
-            LinkedIn
-          </a>
         </div>
-      </div>
       </div>
     </section>
   </div>
@@ -273,6 +277,16 @@ function resetSteps() {
   font-size: 1.5rem;
   line-height: 72px;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.about-author-info {
+  margin-top: 1rem;
+  padding-top: 0.25rem;
+}
+
+.about-duo-row {
+  max-width: 980px;
 }
 
 .add-meme-card {

@@ -9,11 +9,11 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
   <section class="hero-section">
     <div v-for="name in blobs" :key="name" class="blob" :class="name"></div>
     <div class="dot-grid" aria-hidden="true"><span v-for="dot in dots" :key="dot" class="dot"></span></div>
-    <div class="container position-relative hero-content pt-5 mt-5" style="padding-top: 6rem !important;">
-      <div class="row align-items-center">
+    <div class="container position-relative hero-content">
+      <div class="row align-items-lg-center align-items-start pt-lg-2">
         <div class="col-lg-6">
-            <h1 class="display-3 hero-title fw-bold mb-0">Share memes,</h1>
-            <h1 class="display-3 hero-title fw-bold mb-0 hero-accent">without the mess</h1>
+            <h1 class="display-4 hero-title fw-bold mb-0">Share memes,</h1>
+            <h1 class="display-4 hero-title fw-bold mb-0 hero-accent">without the mess</h1>
             <p class="text-muted lead mt-3 mb-4">
               Create, discover, and share memes with your friends and the world.
             </p>
@@ -44,12 +44,13 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
   min-height: 650px;
   background: var(--hero-bg);
   overflow: hidden;
+  padding-bottom: 2.5rem;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  padding-top: 7rem;
+  padding-top: 6.5rem;
 }
 
 .hero-title {

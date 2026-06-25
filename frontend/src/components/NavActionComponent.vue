@@ -9,6 +9,6 @@
       />
       <i class="fa-solid fa-magnifying-glass header-search-icon" aria-hidden="true"></i>
     </div>
-    <router-link class="nav-link btn btn-meme flex-shrink-0" aria-current="page" to="/addMeme"><i class="fa-solid fa-plus me-2"></i>Add Meme</router-link>
+    <router-link class="btn btn-meme d-none d-lg-inline-flex align-items-center flex-shrink-0" aria-current="page" to="/addMeme"><i class="fa-solid fa-plus me-2"></i>Add Meme</router-link>
   </div>
 </template>
