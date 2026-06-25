@@ -189,7 +189,7 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
         .ToListAsync();
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
-        m.Id, m.Title, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
+        m.Id, m.Title, m.Description, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
 })
 .WithTags("Memes");
 
@@ -203,7 +203,7 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
     await db.Entry(meme).Collection(m => m.Likes).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Ok(new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
 })
 .WithTags("Memes");
 
@@ -218,6 +218,7 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     var meme = new Meme
     {
         Title = dto.Title,
+        Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
         ImageBase64 = dto.ImageBase64,
         ImageContentType = dto.ImageContentType,
         UserId = userId,
@@ -231,7 +232,7 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
-        meme.Id, meme.Title, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
 })
 .RequireAuthorization()
 .WithTags("Memes");
@@ -248,6 +249,7 @@ app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, Cla
     if (meme.UserId != userId) return Results.Forbid();
 
     meme.Title = dto.Title;
+    meme.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
     meme.ImageUrl = dto.ImageUrl;
     meme.CategoryId = dto.CategoryId;
     await db.SaveChangesAsync();

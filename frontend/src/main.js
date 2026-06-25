@@ -3,6 +3,8 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { useAuthStore } from '@/stores/auth'
+import { setAuthTokenGetter, setUnauthorizedHandler } from '@/interceptors/http.js'
 import AOS from 'aos'
 
 import 'bootswatch/dist/zephyr/bootstrap.min.css'
@@ -12,11 +14,33 @@ import '@/assets/styles/theme.css'
 import 'aos/dist/aos.css'
 
 const app = createApp(App)
+const pinia = createPinia()
 
 app.use(AOS)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 
-AOS.init();
+const authStore = useAuthStore(pinia)
+
+setAuthTokenGetter(() => authStore.token)
+setUnauthorizedHandler(() => {
+	const currentRoute = router.currentRoute.value
+
+	if (authStore.isAuthenticated) {
+		authStore.logout()
+	}
+
+	if (currentRoute.path !== '/login' && currentRoute.path !== '/register') {
+		router.push({
+			path: '/login',
+			query: {
+				redirect: currentRoute.fullPath,
+			},
+		})
+	}
+})
+
+AOS.init()
+await authStore.initialize()
 
 app.mount('#app')

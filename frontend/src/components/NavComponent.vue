@@ -1,5 +1,28 @@
-<script setup>
+<script>
+import { useAuthStore } from '@/stores/auth'
 
+export default {
+  name: 'NavComponent',
+  data() {
+    return {
+      authStore: useAuthStore(),
+    }
+  },
+  computed: {
+    isAuthenticated() {
+      return this.authStore.isAuthenticated
+    },
+    loginLink() {
+      return { path: '/login', query: { redirect: this.$route.fullPath } }
+    },
+  },
+  methods: {
+    logout() {
+      this.authStore.logout()
+      this.$router.push('/home')
+    },
+  },
+}
 </script>
 
 <template>
@@ -30,8 +53,15 @@
           </li>
         </ul>
         <div class="d-lg-none d-flex flex-column align-items-center gap-2 pb-3">
-          <router-link class="btn btn-meme burger-btn" aria-current="page" to="/addMeme"><i class="fa-solid fa-plus me-2"></i>Add Meme</router-link>
-          <button type="button" class="btn btn-meme burger-btn">Log in</button>
+          <router-link class="btn btn-meme burger-btn" aria-current="page" to="/addMeme">
+            <i class="fa-solid fa-plus me-2"></i>Add Meme
+          </router-link>
+          <button v-if="isAuthenticated" type="button" class="btn btn-meme burger-btn d-inline-flex align-items-center justify-content-center" @click="logout" >
+            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Log out
+          </button>
+          <router-link v-if="!isAuthenticated" class="btn btn-meme burger-btn d-inline-flex align-items-center justify-content-center" :to="loginLink">
+            Log in
+          </router-link>
         </div>
       </div>
       <div class="d-flex align-items-center flex-shrink-0 d-none d-lg-flex">

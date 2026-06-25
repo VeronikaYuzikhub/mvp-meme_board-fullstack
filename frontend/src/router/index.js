@@ -5,6 +5,8 @@ import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import MyMemesView from '@/views/MyMemes.vue'
 import AddMemeView from '@/views/AddMeme.vue'
+import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,8 +35,32 @@ const router = createRouter({
       path: '/addMeme',
       name: 'addMeme',
       component: AddMemeView,
-    }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView,
+    },
   ],
+})
+
+
+router.beforeEach((to) => {
+  const token = localStorage.getItem('mvp_token')
+
+  if (to.meta.requiresAuth && !token) {
+    return {
+      path: '/login',
+      query: { redirect: to.fullPath },
+    }
+  }
+
+  return true
 })
 
 export default router
