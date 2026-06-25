@@ -1,39 +1,11 @@
-<script setup>
+<script>
 import SidebarComponent from '@/components/SidebarComponent.vue'
-const memeCards = [
-  {
-    id: 1,
-    caption: 'WHEN YOUR CODE WORKS ON THE FIRST TRY',
-    tag: 'programming',
-    tagClass: 'tag-purple',
-    likes: '1.2K',
-    imageClass: 'meme-img-1',
-  },
-  {
-    id: 2,
-    caption: 'ME PRETENDING TO UNDERSTAND',
-    tag: 'relatable',
-    tagClass: 'tag-green',
-    likes: '856',
-    imageClass: 'meme-img-2',
-  },
-  {
-    id: 3,
-    caption: 'ME AT 3AM FIXING A BUG',
-    tag: 'funny',
-    tagClass: 'tag-pink',
-    likes: '2.1K',
-    imageClass: 'meme-img-3',
-  },
-  {
-    id: 4,
-    caption: 'ME AT 3AM FIXING A BUG',
-    tag: 'funny',
-    tagClass: 'tag-pink',
-    likes: '2.1K',
-    imageClass: 'meme-img-3',
-  },
-]
+import useMeme from '@/composables/useMeme.js'
+
+export default {
+  mixins: [useMeme],
+  components: {SidebarComponent}
+}
 </script>
 
 <template>
@@ -47,19 +19,31 @@ const memeCards = [
                   <i class="fa-solid fa-burst" style="color: rgb(177, 151, 252);"></i>
                 </h3>
                 <div class="row g-3 mt-3">
-                    <div v-for="meme in memeCards" :key="meme.id" class="col-xl-3 col-12 col-sm-6 col-lg-4">
-                        <article class="rounded-3 app-mockup shadow">
-                            <div class="mockup-card_img rounded-2" :class="meme.imageClass">
-                                <p class="mockup-card_caption">{{meme.caption}}</p>
+                  <p v-if="loading" class="text-muted small">Loading...</p>
+                    <div v-else v-for="meme in memes" :key="meme.id" class="col-xl-3 col-12 col-sm-6 col-lg-4">
+                        <article class="rounded-3 app-mockup shadow meme-card">
+                            <div class="mockup-card_img rounded-2" :style="meme.imageBase64 ? {
+                                                                    backgroundImage: `url(data:${meme.imageContentType};base64,${meme.imageBase64})`,
+                                                                    backgroundSize: 'cover',
+                                                                    backgroundPosition: 'center',} : {}">
+                                <button
+                                  type="button"
+                                  class="meme-delete-btn"
+                                  aria-label="Delete meme"
+                                  :disabled="deletingId === meme.id"
+                                  @click="deleteMeme(meme.id)">
+                                  <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                                <p class="mockup-card_caption">{{ meme.title }}</p>
                             </div>
                             <span class="mockup-tag mb-2 " 
-                                :class="meme.tagClass" 
-                                :style="{backgroundColor: `hsl(${(meme.tag.length * 45 + meme.tag.charCodeAt(0) * 7) % 360}, 75%, 85%)`,
-                                color: `hsl(${(meme.tag.length * 45 + meme.tag.charCodeAt(0) * 7) % 360}, 60%, 25%)` 
-                            }">{{ meme.tag }}</span>
+                                :class="meme.categoryName" 
+                                :style="{backgroundColor: `hsl(${(meme.categoryName.length * 45 + meme.categoryName.charCodeAt(0) * 7) % 360}, 75%, 85%)`,
+                                color: `hsl(${(meme.categoryName.length * 45 + meme.categoryName.charCodeAt(0) * 7) % 360}, 60%, 25%)` 
+                            }">{{ meme.categoryName }}</span>
                             <div class="mockup-card_footer d-flex justify-content-between align-items-center">
                                 <span class="small text-muted ms-1 mb-2">
-                                    <i class="fa-regular fa-heart me-1"></i>{{ meme.likes }}
+                                    <i class="fa-regular fa-heart me-1"></i>{{ meme.likeCount }}
                                 </span>
                                     <i class="fa-solid fa-ellipsis-vertical small text-muted"></i>
                             </div>
@@ -159,5 +143,41 @@ const memeCards = [
 .mockup-card_footer {
   margin-top: 8px;
   padding: 0 2px;
+}
+
+.meme-card:hover .meme-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.meme-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #6b7280;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.meme-delete-btn:hover:not(:disabled) {
+  background: #fff;
+  color: #dc3545;
+}
+
+.meme-delete-btn:disabled {
+  opacity: 0.7;
+  pointer-events: none;
 }
 </style>

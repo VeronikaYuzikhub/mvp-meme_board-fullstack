@@ -8,9 +8,9 @@ const steps = [
   {
     id: 1,
     label: 'Browse the feed',
-    text: 'Open Home and scroll through memes. No complicated layout — just a grid and categories on the side.',
+    text: 'Open Home and scroll through memes. No complicated layout - just a grid and categories on the side.',
     statTitle: 'Memes on feed',
-    statDesc: 'Grid on Home — grows when API is connected.',
+    statDesc: 'Grid on Home - grows when API is connected.',
     icon: 'fa-images',
   },
   {
@@ -26,7 +26,7 @@ const steps = [
     label: 'Add your meme',
     text: 'Go to Add Meme: upload an image, write a title, choose a category, and publish.',
     statTitle: 'Add meme in 3 steps',
-    statDesc: 'Upload, title, category — then publish.',
+    statDesc: 'Upload, title, category - then publish.',
     icon: 'fa-bolt',
   },
 ]
@@ -128,19 +128,13 @@ function resetSteps() {
             <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none p-0" @click="resetSteps">
               RESET
             </button>
-            <button
-              type="button"
-              class="btn btn-link btn-sm text-muted text-decoration-none p-0"
-              :disabled="currentStep === 1"
-              @click="prevStep">
+            <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none p-0"
+              :disabled="currentStep === 1" @click="prevStep">
               PREVIOUS
             </button>
           </div>
-          <button
-            type="button"
-            class="btn btn-link btn-sm hero-accent text-decoration-none p-0 fw-semibold"
-            :disabled="currentStep === steps.length"
-            @click="nextStep">
+          <button type="button" class="btn btn-link btn-sm hero-accent text-decoration-none p-0 fw-semibold"
+            :disabled="currentStep === steps.length" @click="nextStep">
             NEXT <i class="fa-solid fa-chevron-right ms-1"></i>
           </button>
         </div>
@@ -168,8 +162,8 @@ function resetSteps() {
               <div class="d-flex flex-column align-items-center text-center about-author">
                 <div class="about-avatar">V</div>
                 <div class="about-author-info">
-                  <h3 class="h5 fw-bold mb-2">Veronika</h3>
-                  <p class="text-muted mb-3">Author this project</p>
+                  <h3 class="h5 fw-bold mb-2">Veronika Yuzik</h3>
+                  <p class="text-muted mb-3">Author of the project</p>
                 </div>
                 <a
                   class="btn btn-meme"

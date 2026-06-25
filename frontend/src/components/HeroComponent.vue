@@ -3,6 +3,7 @@ import MockupComponent from '@/components/MockupComponent.vue'
 
 const blobs = ['blob-left', 'blob-main', 'blob-right', 'blob-top', 'blob-bottom']
 const dots = Array.from({ length: 16 }, (_, i) => i)
+
 </script>
 
 <template>
