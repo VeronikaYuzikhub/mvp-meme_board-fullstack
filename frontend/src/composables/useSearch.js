@@ -12,10 +12,10 @@ export default {
   },
   watch: {
     'searchStore.searchQuery'() {
-      this.getMemes()
+      this.loadMemes()
     },
     'categoryStore.categoryQuery'() {
-      this.getMemes()
+      this.loadMemes()
     },
   },
 }

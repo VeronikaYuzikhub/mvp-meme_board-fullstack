@@ -1,25 +1,26 @@
 <script setup>
+//декоративний мокап, справжня стрічка містить картинки з АРІ - БД
 const memeCards = [
   {
     caption: 'WHEN YOUR CODE WORKS ON THE FIRST TRY',
     tag: 'programming',
     tagClass: 'tag-purple',
     likes: '1.2K',
-    imageClass: 'meme-img-1',
+    image: 'https://i.imgflip.com/1bij.jpg',
   },
   {
     caption: 'ME PRETENDING TO UNDERSTAND',
     tag: 'relatable',
     tagClass: 'tag-green',
     likes: '856',
-    imageClass: 'meme-img-2',
+    image: 'https://i.imgflip.com/26am.jpg',
   },
   {
     caption: 'ME AT 3AM FIXING A BUG',
     tag: 'funny',
     tagClass: 'tag-pink',
     likes: '2.1K',
-    imageClass: 'meme-img-3',
+    image: 'https://i.imgflip.com/aujac7.jpg',
   },
 ]
 </script>
@@ -48,7 +49,8 @@ const memeCards = [
       <div class="row g-2">
         <div v-for="(card, index) in memeCards" :key="index" class="col-4">
           <article class="mockup-card rounded-3 app-mockup shadow">
-            <div class="mockup-card_img rounded-2" :class="card.imageClass">
+            <div class="mockup-card_img rounded-2">
+              <img :src="card.image" class="mockup-card-photo" alt="" />
               <p class="mockup-card_caption">{{ card.caption }}</p>
             </div>
             <span class="mockup-tag mb-2" :class="card.tagClass">{{ card.tag }}</span>
@@ -123,7 +125,7 @@ const memeCards = [
 
 .mockup-card_img {
   position: relative;
-  height: 150px;
+  height: 190px;
   weight: 75px;
   margin-bottom: 8px;
   display: flex;
@@ -131,9 +133,20 @@ const memeCards = [
   justify-content: center;
   padding: 6px;
   overflow: hidden;
+  background: #e5e7eb;
+}
+
+.mockup-card-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .mockup-card_caption {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-size: 0.45rem;
   font-weight: 800;
@@ -142,18 +155,6 @@ const memeCards = [
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   text-transform: uppercase;
-}
-
-.meme-img-1 {
-  background: linear-gradient(160deg, #6b7280, #9ca3af);
-}
-
-.meme-img-2 {
-  background: linear-gradient(160deg, #78716c, #a8a29e);
-}
-
-.meme-img-3 {
-  background: linear-gradient(160deg, #57534e, #78716c);
 }
 
 .mockup-tag {

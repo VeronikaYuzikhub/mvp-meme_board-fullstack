@@ -1,11 +1,12 @@
 <script>
 import SidebarComponent from '@/components/SidebarComponent.vue'
 import useMeme from '@/composables/useMeme.js'
+import useSearch from '@/composables/useSearch.js'
 import { useAuthStore } from '@/stores/auth'
 import MemeFeedComponent from '@/components/MemeFeedComponent.vue'
 
 export default {
-  mixins: [useMeme],
+  mixins: [useMeme, useSearch],
   data() {
     return {
       authStore: useAuthStore(),
@@ -19,6 +20,11 @@ export default {
   async mounted() {
     if (this.isAuthenticated) await this.getMyMemes()
     else this.loading = false
+  },
+  methods: {
+    async loadMemes() {
+      if (this.isAuthenticated) await this.getMyMemes()
+    },
   },
   components: { SidebarComponent, MemeFeedComponent },
 }

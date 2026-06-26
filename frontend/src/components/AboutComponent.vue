@@ -8,26 +8,17 @@ const steps = [
   {
     id: 1,
     label: 'Browse the feed',
-    text: 'Open Home and scroll through memes. No complicated layout - just a grid and categories on the side.',
-    statTitle: 'Memes on feed',
-    statDesc: 'Grid on Home - grows when API is connected.',
-    icon: 'fa-images',
+    text: 'Open Home and scroll through memes. No complicated layout - just a grid and categories on the side',
   },
   {
     id: 2,
     label: 'Pick a category',
-    text: 'Categories load from the API. Click one in the sidebar to filter what you want to see.',
-    statTitle: 'Categories from API',
-    statDesc: 'Sidebar loads real categories from the backend.',
-    icon: 'fa-folder',
+    text: 'Feeling picky? Tap a category on the left - only the memes you actually want',
   },
   {
     id: 3,
     label: 'Add your meme',
-    text: 'Go to Add Meme: upload an image, write a title, choose a category, and publish.',
-    statTitle: 'Add meme in 3 steps',
-    statDesc: 'Upload, title, category - then publish.',
-    icon: 'fa-bolt',
+    text: 'Go to Add Meme: upload an image, write a title, choose a category, and publish',
   },
 ]
 
@@ -199,31 +190,6 @@ function resetSteps() {
   background: #fff;
 }
 
-.about-bubble {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(var(--bs-primary-rgb), 0.1);
-  font-size: 0.85rem;
-  color: #4b5563;
-  background: #fff;
-}
-
-.about-stats {
-  background: rgba(var(--bs-primary-rgb), 0.07);
-}
-
-.about-stat-btn {
-  border: none;
-  background: transparent;
-}
-
-.about-stat-btn.active {
-  background: rgba(var(--bs-primary-rgb), 0.12);
-  border-radius: 8px;
-}
-
 .about-stepper {
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -249,10 +215,6 @@ function resetSteps() {
 
 .about-step-btn.active {
   background: var(--brand-purple);
-}
-
-.about-bubble-2 {
-  margin-left: 2rem;
 }
 
 .about-avatar {

@@ -52,12 +52,23 @@ export default {
     },
     async getMyMemes() {
       this.loading = true
+
+      const title = useSearchStore().searchQuery
+      const category = useCategoryStore().categoryQuery
+
       try {
-        const response = await http.get('/memes', { params: { mine: true } })
+        const params = { mine: true }
+        if (title.trim()) params.Title = title.trim()
+        if (category.trim()) params.category = category.trim()
+
+        const response = await http.get('/memes', { params })
         this.memes = response.data
       } finally {
         this.loading = false
       }
+    },
+    async loadMemes() {
+      await this.getMemes()
     },
     async toggleLike(meme) {
       if (this.likingId) return

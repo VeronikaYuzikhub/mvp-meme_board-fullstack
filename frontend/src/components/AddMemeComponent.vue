@@ -18,9 +18,15 @@ export default {
       },
       imagePreview: '',
       isSubmitting: false,
+      formError: '',
+      formSuccess: '',
     }
   },
   methods: {
+    clearMessages() {
+      this.formError = ''
+      this.formSuccess = ''
+    },
     openFilePicker() {
       this.$refs.fileInput.click()
     },
@@ -38,12 +44,14 @@ export default {
     },
     processFile(file) {
       if (!ALLOWED_TYPES.includes(file.type)) {
-        alert('Only PNG, JPG and GIF images are allowed')
+        this.formSuccess = ''
+        this.formError = 'Only PNG, JPG and GIF images are allowed.'
         return
       }
 
       if (file.size > MAX_FILE_SIZE) {
-        alert('Image must be 5MB or smaller')
+        this.formSuccess = ''
+        this.formError = 'Image must be 5MB or smaller.'
         return
       }
 
@@ -53,6 +61,7 @@ export default {
         this.form.imageContentType = file.type
         this.form.imageBase64 = base64
         this.imagePreview = reader.result
+        this.formError = ''
       }
       reader.readAsDataURL(file)
     },
@@ -71,19 +80,22 @@ export default {
     async createPost() {
       if (this.isSubmitting) return
 
+      this.formSuccess = ''
+
       if (!this.form.imageBase64) {
-        alert('Please upload an image')
+        this.formError = 'Please upload an image.'
         return
       }
       if (!this.form.title.trim()) {
-        alert('Title is required')
+        this.formError = 'Title is required.'
         return
       }
       if (!this.form.selectedCategoryId) {
-        alert('Select a category')
+        this.formError = 'Please select a category.'
         return
       }
 
+      this.formError = ''
       this.isSubmitting = true
 
       try {
@@ -94,11 +106,11 @@ export default {
           imageContentType: this.form.imageContentType,
           categoryId: Number(this.form.selectedCategoryId),
         })
-        alert('Meme successfully published!')
+        this.formSuccess = 'Meme successfully published!'
         this.resetForm()
       } catch (error) {
         console.error('There was an error creating the post:', error)
-        alert(getHttpErrorMessage(error, 'Failed to send data'))
+        this.formError = getHttpErrorMessage(error, 'Failed to send data')
       } finally {
         this.isSubmitting = false
       }
@@ -117,11 +129,11 @@ export default {
       <div class="row g-4 align-items-stretch">
         <div class="col-lg-5 d-flex">
           <article class="card add-meme-card p-4 text-start h-100 w-100 d-flex flex-column">
-            <h6>Upload Image</h6>
+            <h6 class="required-label mb-0">Upload Image</h6>
             <input ref="fileInput" type="file" accept="image/png,image/jpeg,image/gif" class="d-none" @change="onFileSelected" />
             <div class="upload-zone border border-2 border-dashed rounded-3
                      d-flex flex-column align-items-center justify-content-center
-                     text-center p-4 mt-3 flex-grow-1"  role="button" @click="openFilePicker" @dragover.prevent @drop.prevent="onDrop">
+                     text-center p-4 mt-3 flex-grow-1" :class="{ 'upload-zone-error': formError === 'Please upload an image.' }" role="button" @click="openFilePicker" @dragover.prevent @drop.prevent="onDrop">
               <img v-if="imagePreview" :src="imagePreview"  alt="Selected meme preview"  class="upload-preview mb-3"/>
               <div v-else class="upload-icon-wrap">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -137,18 +149,20 @@ export default {
           <article class="card add-meme-card p-4 text-start h-100 w-100 d-flex flex-column">
             <form @submit.prevent="createPost" class="container py-5">
               <label for="titleInput" class="form-label required-label">Title</label>
-              <input v-model="form.title" type="text" class="form-control w-100 mb-3" id="titleInput" placeholder="Enter item title here..." required />
+              <input v-model="form.title" type="text" class="form-control w-100 mb-3" id="titleInput" placeholder="Enter item title here..." required @input="clearMessages" />
 
               <label for="descriptionInput" class="form-label">Description</label>
               <textarea v-model="form.description" class="form-control w-100 mb-3" id="descriptionInput" rows="3" placeholder="Add a description (optional)" ></textarea>
 
               <label for="categorySelect" class="form-label required-label">Category</label>
-              <select id="categorySelect" class="form-select w-100 mb-3" required v-model="form.selectedCategoryId" :disabled="loading">
+              <select id="categorySelect" class="form-select w-100 mb-3" required v-model="form.selectedCategoryId" :disabled="loading" @change="clearMessages">
                 <option disabled value="">Select a category</option>
                 <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                   {{ cat.name }}
                 </option>
               </select>
+              <p v-if="formError" class="text-danger small mb-2">{{ formError }}</p>
+              <p v-if="formSuccess" class="text-success small mb-2">{{ formSuccess }}</p>
               <button type="submit" class="btn btn-primary btn-meme w-100 mt-auto" :disabled="isSubmitting">
                 {{ isSubmitting ? 'Publication...' : 'Publish Meme' }}
               </button>
@@ -201,5 +215,14 @@ export default {
   color: var(--brand-purple);
   margin-bottom: 0.75rem;
   font-size: 1.15rem;
+}
+
+.required-label::after {
+  content: ' *';
+  color: #dc3545;
+}
+
+.upload-zone-error {
+  border-color: #dc3545 !important;
 }
 </style>

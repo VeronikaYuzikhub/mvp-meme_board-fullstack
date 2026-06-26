@@ -103,7 +103,7 @@ export default {
 
 .mockup-card_img {
   position: relative;
-  height: 150px;
+  height: 190px;
   weight: 75px;
   margin-bottom: 8px;
   display: flex;
@@ -111,9 +111,20 @@ export default {
   justify-content: center;
   padding: 6px;
   overflow: hidden;
+  background: #e5e7eb;
+}
+
+.meme-card-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .mockup-card_caption {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-size: 0.45rem;
   font-weight: 800;
