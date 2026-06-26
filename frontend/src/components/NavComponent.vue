@@ -19,7 +19,7 @@ export default {
   methods: {
     logout() {
       this.authStore.logout()
-      this.$router.push('/home')
+      this.$router.push('/')
     },
   },
 }
@@ -53,7 +53,7 @@ export default {
           </li>
         </ul>
         <div class="d-lg-none d-flex flex-column align-items-center gap-2 pb-3">
-          <router-link class="btn btn-meme burger-btn" aria-current="page" to="/addMeme">
+          <router-link v-if="isAuthenticated" class="btn btn-meme burger-btn" aria-current="page" to="/addMeme">
             <i class="fa-solid fa-plus me-2"></i>Add Meme
           </router-link>
           <button v-if="isAuthenticated" type="button" class="btn btn-meme burger-btn d-inline-flex align-items-center justify-content-center" @click="logout" >
