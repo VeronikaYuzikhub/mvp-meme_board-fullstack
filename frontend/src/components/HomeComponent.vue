@@ -7,11 +7,14 @@ import useSearch from '@/composables/useSearch.js'
 export default {
   mixins: [useMeme, useSearch],
   components: {SidebarComponent, MemeFeedComponent},
+  async mounted() {
+    await this.getMemes()
+  },
 }
 </script>
 
 <template>
-    <section class="p-5">
+    <section class="feed-section px-5 pt-4 pb-5">
         <div class="container-fluid position-relative">
         <div class="row g-4">
             <SidebarComponent />
@@ -20,7 +23,7 @@ export default {
                   All memes
                   <i class="fa-solid fa-burst" style="color: rgb(177, 151, 252);"></i>
                 </h3>
-                <MemeFeedComponent :memes="memes" :loading="loading" />
+                <MemeFeedComponent :memes="memes" :loading="loading" :liking-id="likingId" @like="toggleLike"/>
             </section>
         </div>
         </div>

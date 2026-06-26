@@ -164,6 +164,9 @@ app.MapPost("/upload", async(ClaimsPrincipal principal, IFormFile formFile, AppD
 // READ: all memes
 app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool mine = false, string? category = null, string? Title = null) =>
 {
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    int? currentUserId = int.TryParse(userIdStr, out var parsedUserId) ? parsedUserId : null;
+
     var query = db.Memes
         .Include(m => m.User)
         .Include(m => m.Likes)
@@ -172,10 +175,9 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
 
     if (mine)
     {
-        var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!int.TryParse(userIdStr, out var userId))
+        if (!currentUserId.HasValue)
             return Results.Unauthorized();
-        query = query.Where(m => m.UserId == userId);
+        query = query.Where(m => m.UserId == currentUserId.Value);
     }
 
     if(!string.IsNullOrWhiteSpace(category))
@@ -192,12 +194,13 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
     }
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
-        m.Id, m.Title, m.Description, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));
+        m.Id, m.Title, m.Description, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "",
+        currentUserId.HasValue && m.Likes.Any(l => l.UserId == currentUserId.Value))));
 })
 .WithTags("Memes");
 
 // READ: one meme by id
-app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
+app.MapGet("/memes/{id}", async (int id, AppDbContext db, ClaimsPrincipal principal) =>
 {
     if (await db.Memes.FindAsync(id) is not Meme meme)
         return Results.NotFound();
@@ -205,8 +208,13 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db) =>
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     await db.Entry(meme).Collection(m => m.Likes).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
+
+    var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    int? currentUserId = int.TryParse(userIdStr, out var parsedUserId) ? parsedUserId : null;
+    var isLikedByMe = currentUserId.HasValue && meme.Likes.Any(l => l.UserId == currentUserId.Value);
+
     return Results.Ok(new MemeResponseDto(
-        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? "", isLikedByMe));
 })
 .WithTags("Memes");
 
@@ -235,7 +243,7 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     await db.Entry(meme).Reference(m => m.User).LoadAsync();
     await db.Entry(meme).Reference(m => m.Category).LoadAsync();
     return Results.Created($"/memes/{meme.Id}", new MemeResponseDto(
-        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? ""));
+        meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.CreatedAt, meme.User?.Name ?? "", 0, meme.Category?.Name ?? "", false));
 })
 .RequireAuthorization()
 .WithTags("Memes");

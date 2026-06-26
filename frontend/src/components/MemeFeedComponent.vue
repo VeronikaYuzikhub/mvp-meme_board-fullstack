@@ -1,17 +1,22 @@
 <script>
-import SidebarComponent from '@/components/SidebarComponent.vue'
-import useMeme from '@/composables/useMeme.js'
-import useSearch from '@/composables/useSearch.js'
-
 export default {
   props: {
     memes: Array,
     loading: Boolean,
     showDelete: { type: Boolean, default: false },
     deletingId: { type: Number, default: null },
+    likingId: { type: Number, default: null },
   },
-  emits: ['delete'],
-  components: { SidebarComponent },
+  emits: ['delete', 'like'],
+  methods: {
+    categoryStyle(name) {
+      const hue = (name.length * 45 + name.charCodeAt(0) * 7) % 360
+      return {
+        backgroundColor: `hsl(${hue}, 75%, 85%)`,
+        color: `hsl(${hue}, 60%, 25%)`,
+      }
+    },
+  },
 }
 </script>
 
@@ -24,15 +29,18 @@ export default {
                                                                     backgroundImage: `url(data:${meme.imageContentType};base64,${meme.imageBase64})`,
                                                                     backgroundSize: 'cover',
                                                                     backgroundPosition: 'center',} : {}">
+          <button v-if="showDelete" type="button" class="meme-delete-btn" aria-label="Delete meme"
+            :disabled="deletingId === meme.id"
+            @click="$emit('delete', meme.id)">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+          <p class="mockup-card_caption">{{ meme.title }}</p>
         </div>
-        <span class="mockup-tag mb-2"
-          :class="meme.categoryName"
-          :style="{backgroundColor: `hsl(${(meme.categoryName.length * 45 + meme.categoryName.charCodeAt(0) * 7) % 360}, 75%, 85%)`,
-          color: `hsl(${(meme.categoryName.length * 45 + meme.categoryName.charCodeAt(0) * 7) % 360}, 60%, 25%)`
-        }">{{ meme.categoryName }}</span>
+        <span class="mockup-tag mb-2" :class="meme.categoryName" :style="categoryStyle(meme.categoryName)">{{ meme.categoryName }}</span>
         <div class="mockup-card_footer d-flex justify-content-between align-items-center">
-          <span class="small text-muted ms-1 mb-2">
-            <i class="fa-regular fa-heart me-1"></i>{{ meme.likeCount }}
+          <span class="small text-muted ms-1 mb-2" @click="$emit('like', meme)">
+            <i :class="meme.isLikedByMe ? 'fa-solid' : 'fa-regular'" class="fa-heart me-1"></i>
+                {{ meme.likeCount }}
           </span>
           <i class="fa-solid fa-ellipsis-vertical small text-muted"></i>
         </div>

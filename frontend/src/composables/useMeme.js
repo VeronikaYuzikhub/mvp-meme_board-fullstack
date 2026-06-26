@@ -9,10 +9,8 @@ export default {
       memes: [],
       loading: true,
       deletingId: null,
+      likingId: null,
     }
-  },
-  async mounted() {
-    await this.getMemes()
   },
   methods: {
     async getMemes() {
@@ -26,7 +24,7 @@ export default {
         if (title.trim()) params.Title = title.trim()
         if (category.trim()) params.category = category.trim()
 
-        const response = await api.get('/memes', { params })
+        const response = await http.get('/memes', { params })
         this.memes = response.data
       } finally {
         this.loading = false
@@ -59,6 +57,27 @@ export default {
         this.memes = response.data
       } finally {
         this.loading = false
+      }
+    },
+    async toggleLike(meme) {
+      if (this.likingId) return
+
+      this.likingId = meme.id
+
+      try {
+        if (meme.isLikedByMe) {
+          await http.delete(`/memes/${meme.id}/like`)
+          meme.likeCount--
+          meme.isLikedByMe = false
+        } else {
+          await http.post(`/memes/${meme.id}/like`)
+          meme.likeCount++
+          meme.isLikedByMe = true
+        }
+      } catch (error) {
+        alert(getHttpErrorMessage(error, 'Failed to update like'))
+      } finally {
+        this.likingId = null
       }
     },
   },
