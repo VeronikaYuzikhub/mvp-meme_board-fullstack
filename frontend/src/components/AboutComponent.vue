@@ -81,13 +81,7 @@ function resetSteps() {
           </p>
         </div>
         <div class="col-lg-6 position-relative text-center text-lg-end">
-          <img
-            :src="catImg"
-            alt="Cat with sunglasses"
-            class="about-cat-img img-fluid"
-            data-aos="zoom-in-up"
-            data-aos-duration="1000"
-            data-aos-easing="ease-out-cubic" />
+          <img :src="catImg" alt="Cat with sunglasses" class="about-cat-img img-fluid" data-aos="zoom-in-up" data-aos-duration="1000" data-aos-easing="ease-out-cubic" />
           <div
             class="about-speech-bubble"
             data-aos="fade-left"

@@ -181,12 +181,15 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
     if(!string.IsNullOrWhiteSpace(category))
         query = query.Where(m => m.Category != null && m.Category.Name == category);
 
-    if (!string.IsNullOrWhiteSpace(Title))
-        query = query.Where(m => m.Title.ToUpper().Contains(Title.ToUpper()));
-
     var memes = await query
         .OrderByDescending(m => m.CreatedAt)
         .ToListAsync();
+
+    if (!string.IsNullOrWhiteSpace(Title))
+    {
+        var search = Title.Trim();
+        memes = memes.Where(m => m.Title.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
         m.Id, m.Title, m.Description, m.ImageBase64, m.ImageContentType, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "")));

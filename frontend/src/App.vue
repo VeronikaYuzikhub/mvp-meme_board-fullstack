@@ -1,6 +1,5 @@
 <script setup>
-import router from './router';
-
+import router from './router'
 </script>
 
 <template>
@@ -9,5 +8,4 @@ import router from './router';
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

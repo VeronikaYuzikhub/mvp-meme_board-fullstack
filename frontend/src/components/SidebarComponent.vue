@@ -1,10 +1,21 @@
 <script>
 import useCategories from '@/composables/useCategories.js'
+import { useCategoryStore } from '@/stores/category'
 
 export default {
   mixins: [useCategories],
+  data() {
+    return { categoryStore: useCategoryStore() }
+  },
+  methods: {
+    selectAll() {
+      this.categoryStore.categoryQuery = ''
+    },
+    selectCategory(name) {
+      this.categoryStore.categoryQuery = name
+    },
+  },
 }
-
 </script>
 
 <template>
@@ -13,18 +24,26 @@ export default {
         <p v-if="loading" class="text-muted small">Loading...</p>
         <div v-else class="list-group list-group-flush rounded-3 border shadow-sm">
             <button
+                type="button"
+                class="list-group-item list-group-item-action border-0 py-2 px- small category-btn d-flex align-items-center"
+                :class="{ active: !categoryStore.categoryQuery }"
+                @click="selectAll">
+                <i class="fa-solid fa-border-all category-icon me-3"></i>
+                <span>All</span>
+            </button>
+            <button
                 v-for="cat in categories"
                 :key="cat.id"
                 type="button"
-                class="list-group-item list-group-item-action border-0 py-2 px- small category-btn d-flex align-items-center">
-
+                @click="selectCategory(cat.name)"
+                class="list-group-item list-group-item-action border-0 py-2 px- small category-btn d-flex align-items-center"
+                :class="{ active: categoryStore.categoryQuery === cat.name }">
                 <i v-if="cat.icon" class="fa-regular category-icon me-3" :class="cat.icon"></i>
-                <span>{{cat.name}}</span>
+                <span>{{ cat.name }}</span>
             </button>
         </div>
     </aside>
 </template>
-
 
 <style scoped>
 .category-btn {
@@ -42,4 +61,3 @@ export default {
   color: var(--brand-purple);
 }
 </style>
-

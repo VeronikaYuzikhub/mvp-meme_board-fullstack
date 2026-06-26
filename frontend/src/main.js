@@ -24,20 +24,20 @@ const authStore = useAuthStore(pinia)
 
 setAuthTokenGetter(() => authStore.token)
 setUnauthorizedHandler(() => {
-	const currentRoute = router.currentRoute.value
+  const currentRoute = router.currentRoute.value
 
-	if (authStore.isAuthenticated) {
-		authStore.logout()
-	}
+  if (authStore.isAuthenticated) {
+    authStore.logout()
+  }
 
-	if (currentRoute.path !== '/login' && currentRoute.path !== '/register') {
-		router.push({
-			path: '/login',
-			query: {
-				redirect: currentRoute.fullPath,
-			},
-		})
-	}
+  if (currentRoute.path !== '/login' && currentRoute.path !== '/register') {
+    router.push({
+      path: '/login',
+      query: {
+        redirect: currentRoute.fullPath,
+      },
+    })
+  }
 })
 
 AOS.init()

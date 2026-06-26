@@ -5,7 +5,7 @@ import NavComponent from '@/components/NavComponent.vue'
 </script>
 
 <template>
-  <NavComponent/>
+  <NavComponent />
   <main class="flex-grow-1 min-w-0">
     <AddMemeComponent />
   </main>

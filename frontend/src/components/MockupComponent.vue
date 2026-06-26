@@ -84,9 +84,15 @@ const memeCards = [
   border-radius: 50%;
 }
 
-.window-dot-red { background: #ff5f57; }
-.window-dot-yellow { background: #febc2e; }
-.window-dot-green { background: #28c840; }
+.window-dot-red {
+  background: #ff5f57;
+}
+.window-dot-yellow {
+  background: #febc2e;
+}
+.window-dot-green {
+  background: #28c840;
+}
 
 .app-mockup_header {
   padding: 10px 18px 14px;
@@ -99,8 +105,8 @@ const memeCards = [
 }
 
 .mockup-search {
-  background:rgb(248, 248, 250);
-  border-color:rgb(238, 238, 240);
+  background: rgb(248, 248, 250);
+  border-color: rgb(238, 238, 240);
   border-radius: 7px;
   padding: 7px 14px;
   font-size: 0.72rem;

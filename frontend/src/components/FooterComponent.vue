@@ -4,8 +4,7 @@
       <path
         d="M0,0 C170,40 340,40 512,15 C684,-10 854,40 1024,0 L1024,60 L0,60 Z"
         fill="#a78bfa"
-        class="flip-y"
-      />
+        class="flip-y" />
     </svg>
     <div class="footer-content">
       <p class="m-0">© 2026 MemeBoard. All rights reserved.</p>

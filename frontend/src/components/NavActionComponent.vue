@@ -1,32 +1,44 @@
-<script setup>
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+<script>
 import { useAuthStore } from '@/stores/auth'
+import { useSearchStore } from '@/stores/search.js'
 
-const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
-const isAuthenticated = computed(() => authStore.isAuthenticated)
-const loginLink = computed(() => ({
-  path: '/login',
-  query: { redirect: route.fullPath },
-}))
-
-function logout() {
-  authStore.logout()
-  router.push('/home')
+export default {
+  name: 'NavActionComponent',
+  data() {
+    return {
+      authStore: useAuthStore(),
+      searchStore: useSearchStore(),
+    }
+  },
+  computed: {
+    isAuthenticated() {
+      return this.authStore.isAuthenticated
+    },
+    loginLink() {
+      return { path: '/login', query: { redirect: this.$route.fullPath } }
+    },
+    searchQuery: {
+      get() {
+        return this.searchStore.searchQuery
+      },
+      set(value) {
+        this.searchStore.searchQuery = value
+      },
+    },
+  },
+  methods: {
+    logout() {
+      this.authStore.logout()
+      this.$router.push('/home')
+    },
+  },
 }
 </script>
 
 <template>
   <div class="d-flex align-items-center gap-3">
     <div class="header-search-wrap">
-      <input
-        type="search"
-        class="form-control header-search-input"
-        placeholder="Search memes..."
-        aria-label="Search"
-      />
+      <input v-model="searchQuery" type="search" class="form-control header-search-input" placeholder="Search memes..." aria-label="Search" />
       <i class="fa-solid fa-magnifying-glass header-search-icon" aria-hidden="true"></i>
     </div>
     <router-link v-if="!isAuthenticated" class="btn btn-meme flex-shrink-0 d-none d-lg-inline-flex align-items-center" :to="loginLink">

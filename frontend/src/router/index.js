@@ -49,7 +49,6 @@ const router = createRouter({
   ],
 })
 
-
 router.beforeEach((to) => {
   const token = localStorage.getItem('mvp_token')
 

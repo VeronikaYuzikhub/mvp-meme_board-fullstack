@@ -50,8 +50,8 @@ body {
 }
 
 .mockup-search {
-  background:rgb(248, 248, 250);
-  border-color:rgb(238, 238, 240);
+  background: rgb(248, 248, 250);
+  border-color: rgb(238, 238, 240);
   border-radius: 7px;
   padding: 7px 14px;
   font-size: 0.72rem;
@@ -80,4 +80,18 @@ body {
   color: #9ca3af;
   font-size: 0.85rem;
   pointer-events: none;
+}
+
+.navbar-nav .nav-link.router-link-exact-active {
+  color: var(--brand-purple) !important;
+  font-weight: 600;
+}
+
+.navbar-nav .nav-link.router-link-exact-active::after {
+  content: '';
+  display: block;
+  height: 2px;
+  margin-top: 4px;
+  background-color: var(--brand-purple);
+  border-radius: 1px;
 }
