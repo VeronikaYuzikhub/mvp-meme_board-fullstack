@@ -25,6 +25,9 @@ export default {
     async loadMemes() {
       if (this.isAuthenticated) await this.getMyMemes()
     },
+    async goEdit(id) {
+      this.$router.push({ path: '/addMeme', query: { edit: id } })
+    }
   },
   components: { SidebarComponent, MemeFeedComponent },
 }
@@ -53,9 +56,11 @@ export default {
               :memes="memes"
               :loading="loading"
               :show-delete="true"
+              :show-edit="true"
               :deleting-id="deletingId"
               :liking-id="likingId"
               @delete="deleteMeme"
+              @edit="goEdit"
               @like="toggleLike" />
           </div>
         </section>

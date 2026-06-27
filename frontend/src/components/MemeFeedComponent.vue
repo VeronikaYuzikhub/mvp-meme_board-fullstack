@@ -3,12 +3,31 @@ export default {
   props: {
     memes: Array,
     loading: Boolean,
+    showEdit: { type: Boolean, default: false },
+    editingId: { type: Number, default: null },
     showDelete: { type: Boolean, default: false },
     deletingId: { type: Number, default: null },
     likingId: { type: Number, default: null },
   },
-  emits: ['delete', 'like'],
+  emits: ['delete', 'edit', 'like'],
   methods: {
+    memeImageStyle(meme) {
+      if (meme.imageBase64) {
+        return {
+          backgroundImage: `url(data:${meme.imageContentType};base64,${meme.imageBase64})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }
+      }
+      if (meme.imageUrl) {
+        return {
+          backgroundImage: `url(${meme.imageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }
+      }
+      return {}
+    },
     categoryStyle(name) {
       const hue = (name.length * 45 + name.charCodeAt(0) * 7) % 360
       return {
@@ -25,18 +44,21 @@ export default {
     <p v-if="loading" class="text-muted small">Loading...</p>
     <div v-else v-for="meme in memes" :key="meme.id" class="col-xl-3 col-12 col-sm-6 col-lg-4">
       <article class="rounded-3 app-mockup shadow meme-card">
-        <div class="mockup-card_img rounded-2" :style="meme.imageBase64 ? {
-                                                                    backgroundImage: `url(data:${meme.imageContentType};base64,${meme.imageBase64})`,
-                                                                    backgroundSize: 'cover',
-                                                                    backgroundPosition: 'center',} : {}">
-          <button v-if="showDelete" type="button" class="meme-delete-btn" aria-label="Delete meme"
+        <div class="mockup-card_img rounded-2" :style="memeImageStyle(meme)">
+          <button v-if="showDelete" type="button" class="meme-action-btn meme-delete-btn" aria-label="Delete meme"
             :disabled="deletingId === meme.id"
             @click="$emit('delete', meme.id)">
             <i class="fa-regular fa-trash-can"></i>
           </button>
+          <button v-if="showEdit" type="button" class="meme-action-btn meme-edit-btn" aria-label="Edit meme"
+            :disabled="editingId === meme.id"
+            @click="$emit('edit', meme.id)">
+            <i class="fa-solid fa-pen"></i>
+          </button>
           <p class="mockup-card_caption">{{ meme.title }}</p>
         </div>
         <span class="mockup-tag mb-2" :class="meme.categoryName" :style="categoryStyle(meme.categoryName)">{{ meme.categoryName }}</span>
+        <p v-if="meme.description" class="meme-desc small text-muted">{{ meme.description }}</p>
         <div class="mockup-card_footer d-flex justify-content-between align-items-center">
           <span class="small text-muted ms-1 mb-2" @click="$emit('like', meme)">
             <i :class="meme.isLikedByMe ? 'fa-solid' : 'fa-regular'" class="fa-heart me-1"></i>
@@ -144,20 +166,38 @@ export default {
   font-weight: 600;
 }
 
+.meme-desc {
+  margin: 0 8px 6px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .mockup-card_footer {
   margin-top: 8px;
   padding: 0 2px;
 }
 
-.meme-card:hover .meme-delete-btn {
+.meme-card:hover .meme-action-btn {
   opacity: 1;
   pointer-events: auto;
 }
 
 .meme-delete-btn {
-  position: absolute;
   top: 8px;
   right: 8px;
+}
+
+.meme-edit-btn {
+  top: 8px;
+  right: 48px;
+}
+
+.meme-action-btn {
+  position: absolute;
   z-index: 2;
   width: 32px;
   height: 32px;
@@ -180,7 +220,12 @@ export default {
   color: #dc3545;
 }
 
-.meme-delete-btn:disabled {
+.meme-edit-btn:hover:not(:disabled) {
+  background: #fff;
+  color:rgb(246, 250, 47);
+}
+
+.meme-action-btn:disabled {
   opacity: 0.7;
   pointer-events: none;
 }

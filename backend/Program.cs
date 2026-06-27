@@ -219,12 +219,21 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db, ClaimsPrincipal princi
 .WithTags("Memes");
 
 // CREATE: add new meme
-app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal principal) =>
+app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal principal, IConfiguration config) =>
 {
     var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
     if (!int.TryParse(userIdStr, out var userId))
         return Results.Unauthorized();
+
+    var maxTitleLength = config.GetValue("AppSettings:MaxMemeTitleLength", 100);
+    var maxDescriptionLength = config.GetValue("AppSettings:MaxMemeDescriptionLength", 200);
+
+    if (dto.Title.Length > maxTitleLength)
+        return Results.BadRequest($"Title must be {maxTitleLength} characters or less.");
+
+    if (dto.Description?.Length > maxDescriptionLength)
+        return Results.BadRequest($"Description must be {maxDescriptionLength} characters or less.");
 
     var meme = new Meme
     {
@@ -249,11 +258,20 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
 .WithTags("Memes");
 
 // UPDATE: edit existing meme
-app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, ClaimsPrincipal principal) =>
+app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, ClaimsPrincipal principal, IConfiguration config) =>
 {
     var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     if (!int.TryParse(userIdStr, out var userId))
         return Results.Unauthorized();
+
+    var maxTitleLength = config.GetValue("AppSettings:MaxMemeTitleLength", 100);
+    var maxDescriptionLength = config.GetValue("AppSettings:MaxMemeDescriptionLength", 200);
+
+    if (dto.Title.Length > maxTitleLength)
+        return Results.BadRequest($"Title must be {maxTitleLength} characters or less.");
+
+    if (dto.Description?.Length > maxDescriptionLength)
+        return Results.BadRequest($"Description must be {maxDescriptionLength} characters or less.");
 
     var meme = await db.Memes.FindAsync(id);
     if (meme is null) return Results.NotFound();
@@ -263,6 +281,13 @@ app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, Cla
     meme.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
     meme.ImageUrl = dto.ImageUrl;
     meme.CategoryId = dto.CategoryId;
+
+    if (!string.IsNullOrWhiteSpace(dto.ImageBase64))
+    {
+        meme.ImageBase64 = dto.ImageBase64;
+        meme.ImageContentType = string.IsNullOrWhiteSpace(dto.ImageContentType) ? "image/jpeg" : dto.ImageContentType;
+    }
+
     await db.SaveChangesAsync();
     return Results.NoContent();
 })

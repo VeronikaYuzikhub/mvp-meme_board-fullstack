@@ -37,6 +37,7 @@ export default {
     },
     async deleteMeme(id) {
       if (this.deletingId) return
+      if (!confirm('Delete this meme?')) return
 
       this.deletingId = id
 
