@@ -38,7 +38,8 @@ export default {
 <template>
   <div class="d-flex align-items-center gap-3">
     <div class="header-search-wrap">
-      <input v-model="searchQuery" type="search" class="form-control header-search-input" placeholder="Search memes..." aria-label="Search" />
+      <input v-model="searchQuery" type="search" class="form-control header-search-input" 
+      placeholder="Search memes..." aria-label="Search" />
       <i class="fa-solid fa-magnifying-glass header-search-icon" aria-hidden="true"></i>
     </div>
     <router-link v-if="!isAuthenticated" class="btn btn-meme flex-shrink-0 d-none d-lg-inline-flex align-items-center" :to="loginLink">

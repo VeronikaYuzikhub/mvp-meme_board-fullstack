@@ -1,6 +1,7 @@
 using backend.Data;
 using backend.DTOs;
 using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -195,7 +196,7 @@ app.MapGet("/memes", async (AppDbContext db, ClaimsPrincipal principal, bool min
 
     return Results.Ok(memes.Select(m => new MemeResponseDto(
         m.Id, m.Title, m.Description, m.ImageBase64, m.ImageContentType, m.ImageUrl, m.CreatedAt, m.User?.Name ?? "", m.Likes.Count, m.Category?.Name ?? "",
-        currentUserId.HasValue && m.Likes.Any(l => l.UserId == currentUserId.Value))));
+        m.Likes.Any(l => MemeLikeHelper.IsLikedByUser(currentUserId, l)))));
 })
 .WithTags("Memes");
 
@@ -211,7 +212,7 @@ app.MapGet("/memes/{id}", async (int id, AppDbContext db, ClaimsPrincipal princi
 
     var userIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     int? currentUserId = int.TryParse(userIdStr, out var parsedUserId) ? parsedUserId : null;
-    var isLikedByMe = currentUserId.HasValue && meme.Likes.Any(l => l.UserId == currentUserId.Value);
+    var isLikedByMe = meme.Likes.Any(l => MemeLikeHelper.IsLikedByUser(currentUserId, l));
 
     return Results.Ok(new MemeResponseDto(
         meme.Id, meme.Title, meme.Description, meme.ImageBase64, meme.ImageContentType, meme.ImageUrl, meme.CreatedAt, meme.User?.Name ?? "", meme.Likes.Count, meme.Category?.Name ?? "", isLikedByMe));
@@ -229,10 +230,10 @@ app.MapPost("/memes", async (CreateMemeDto dto, AppDbContext db, ClaimsPrincipal
     var maxTitleLength = config.GetValue("AppSettings:MaxMemeTitleLength", 100);
     var maxDescriptionLength = config.GetValue("AppSettings:MaxMemeDescriptionLength", 200);
 
-    if (dto.Title.Length > maxTitleLength)
+    if (!MemeValidator.IsTitleLengthCorrect(dto.Title, maxTitleLength))
         return Results.BadRequest($"Title must be {maxTitleLength} characters or less.");
 
-    if (dto.Description?.Length > maxDescriptionLength)
+    if (!MemeValidator.IsDescLengthCorrect(dto.Description, maxDescriptionLength))
         return Results.BadRequest($"Description must be {maxDescriptionLength} characters or less.");
 
     var meme = new Meme
@@ -267,10 +268,10 @@ app.MapPut("/memes/{id}", async (int id, UpdateMemeDto dto, AppDbContext db, Cla
     var maxTitleLength = config.GetValue("AppSettings:MaxMemeTitleLength", 100);
     var maxDescriptionLength = config.GetValue("AppSettings:MaxMemeDescriptionLength", 200);
 
-    if (dto.Title.Length > maxTitleLength)
+    if (!MemeValidator.IsTitleLengthCorrect(dto.Title, maxTitleLength))
         return Results.BadRequest($"Title must be {maxTitleLength} characters or less.");
 
-    if (dto.Description?.Length > maxDescriptionLength)
+    if (!MemeValidator.IsDescLengthCorrect(dto.Description, maxDescriptionLength))
         return Results.BadRequest($"Description must be {maxDescriptionLength} characters or less.");
 
     var meme = await db.Memes.FindAsync(id);
@@ -323,7 +324,7 @@ app.MapPost("/memes/{id}/like", async (int id, AppDbContext db, ClaimsPrincipal 
     if (await db.Memes.FindAsync(id) is not Meme meme)
         return Results.NotFound();
 
-    if (await db.MemeLikes.AnyAsync(l => l.MemeId == id && l.UserId == userId))
+    if (await db.MemeLikes.AnyAsync(l => MemeLikeHelper.IsSameLike(id, userId, l)))
         return Results.NoContent();
 
     db.MemeLikes.Add(new MemeLike { UserId = userId, MemeId = id });

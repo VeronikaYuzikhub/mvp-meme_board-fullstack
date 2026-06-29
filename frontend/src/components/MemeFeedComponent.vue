@@ -43,7 +43,7 @@ export default {
   <div class="row g-3 mt-3">
     <p v-if="loading" class="text-muted small">Loading...</p>
     <div v-else v-for="meme in memes" :key="meme.id" class="col-xl-3 col-12 col-sm-6 col-lg-4">
-      <article class="rounded-3 app-mockup shadow meme-card">
+      <article class="rounded-3 app-mockup shadow meme-card h-100 d-flex flex-column">
         <div class="mockup-card_img rounded-2" :style="memeImageStyle(meme)">
           <button v-if="showDelete" type="button" class="meme-action-btn meme-delete-btn" aria-label="Delete meme"
             :disabled="deletingId === meme.id"
@@ -58,8 +58,8 @@ export default {
           <p class="mockup-card_caption">{{ meme.title }}</p>
         </div>
         <span class="mockup-tag mb-2" :class="meme.categoryName" :style="categoryStyle(meme.categoryName)">{{ meme.categoryName }}</span>
-        <p v-if="meme.description" class="meme-desc small text-muted">{{ meme.description }}</p>
-        <div class="mockup-card_footer d-flex justify-content-between align-items-center">
+        <p class="meme-desc small text-muted">{{ meme.description }}</p>
+        <div class="mockup-card_footer d-flex justify-content-between align-items-center mt-auto">
           <span class="small text-muted ms-1 mb-2" @click="$emit('like', meme)">
             <i :class="meme.isLikedByMe ? 'fa-solid' : 'fa-regular'" class="fa-heart me-1"></i>
                 {{ meme.likeCount }}
@@ -159,6 +159,8 @@ export default {
 
 .mockup-tag {
   display: inline-block;
+  align-self: flex-start;
+  width: fit-content;
   font-size: 0.62rem;
   padding: 2px 8px;
   margin: 2px 8px;
@@ -170,6 +172,7 @@ export default {
   margin: 0 8px 6px;
   font-size: 0.72rem;
   line-height: 1.35;
+  min-height: calc(0.72rem * 1.35 * 2);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

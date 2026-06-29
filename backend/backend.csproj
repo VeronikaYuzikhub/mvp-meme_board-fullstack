@@ -22,4 +22,11 @@
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="backend.Tests\**" />
+    <Content Remove="backend.Tests\**" />
+    <EmbeddedResource Remove="backend.Tests\**" />
+    <None Remove="backend.Tests\**" />
+  </ItemGroup>
+
 </Project>

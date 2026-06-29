@@ -38,7 +38,7 @@ export default {
                 @click="selectCategory(cat.name)"
                 class="list-group-item list-group-item-action border-0 py-2 px- small category-btn d-flex align-items-center"
                 :class="{ active: categoryStore.categoryQuery === cat.name }">
-                <i v-if="cat.icon" class="fa-regular category-icon me-3" :class="cat.icon"></i>
+                <i v-if="cat.icon" class="fa-solid category-icon me-3" :class="cat.icon"></i>
                 <span>{{ cat.name }}</span>
             </button>
         </div>
