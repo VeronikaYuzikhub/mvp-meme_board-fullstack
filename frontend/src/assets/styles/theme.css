@@ -3,6 +3,7 @@
   --bs-primary: #8f72ff;
   --bs-primary-rgb: 143, 114, 255;
   --brand-purple: #8f72ff;
+  --brand-purple-strong: #6b52e0;
   --light-purple: #a48fff;
 
   --hero-bg: #ffffff;
@@ -26,8 +27,8 @@ body {
 }
 
 .btn-meme {
-  background-color: var(--brand-purple);
-  border-color: var(--brand-purple);
+  background-color: var(--brand-purple-strong);
+  border-color: var(--brand-purple-strong);
   color: #fff;
   border-radius: 8px;
   padding: 8px 16px;
@@ -37,8 +38,8 @@ body {
   color: #fff;
 }
 .btn-meme:hover {
-  background-color: var(--light-purple);
-  border-color: var(--light-purple);
+  background-color: var(--brand-purple);
+  border-color: var(--brand-purple);
   color: #fff;
 }
 

@@ -1,4 +1,8 @@
 <script setup>
+import meme1 from '@/assets/images/mockup/meme-1.jpg'
+import meme2 from '@/assets/images/mockup/meme-2.jpg'
+import meme3 from '@/assets/images/mockup/meme-3.jpg'
+
 //декоративний мокап, справжня стрічка містить картинки з АРІ - БД
 const memeCards = [
   {
@@ -6,29 +10,32 @@ const memeCards = [
     tag: 'programming',
     tagClass: 'tag-purple',
     likes: '1.2K',
-    image: 'https://i.imgflip.com/1bij.jpg',
+    image: meme1,
   },
   {
     caption: 'ME PRETENDING TO UNDERSTAND',
     tag: 'relatable',
     tagClass: 'tag-green',
     likes: '856',
-    image: 'https://i.imgflip.com/26am.jpg',
+    image: meme2,
   },
   {
     caption: 'ME AT 3AM FIXING A BUG',
     tag: 'funny',
     tagClass: 'tag-pink',
     likes: '2.1K',
-    image: 'https://i.imgflip.com/aujac7.jpg',
+    image: meme3,
   },
 ]
 </script>
 
 <template>
-  <div class="app-mockup rounded-4 shadow" data-aos="flip-left"
-     data-aos-easing="ease-out-cubic"
-     data-aos-duration="2000">
+  <div
+    class="app-mockup rounded-4 shadow"
+    data-aos="flip-left"
+    data-aos-easing="ease-out-cubic"
+    data-aos-duration="2000"
+  >
     <div class="app-mockup_dots">
       <span class="window-dot window-dot-red"></span>
       <span class="window-dot window-dot-yellow"></span>
@@ -40,7 +47,7 @@ const memeCards = [
         <i class="fa-regular fa-face-smile mockup-logo"></i>
         <span class="fw-bold small mb-0">MemeBoard</span>
       </div>
-      <div class="mockup-search text-muted">
+      <div class="mockup-search">
         <span class="me-5">Search memes...</span><i class="fa-solid fa-magnifying-glass me-1"></i>
       </div>
     </div>
@@ -50,7 +57,13 @@ const memeCards = [
         <div v-for="(card, index) in memeCards" :key="index" class="col-4">
           <article class="mockup-card rounded-3 app-mockup shadow">
             <div class="mockup-card_img rounded-2">
-              <img :src="card.image" class="mockup-card-photo" alt="" />
+              <img
+                :src="card.image"
+                class="mockup-card-photo"
+                :alt="card.caption"
+                :fetchpriority="index === 0 ? 'high' : undefined"
+                decoding="async"
+              />
               <p class="mockup-card_caption">{{ card.caption }}</p>
             </div>
             <span class="mockup-tag mb-2" :class="card.tagClass">{{ card.tag }}</span>
@@ -113,6 +126,7 @@ const memeCards = [
   padding: 7px 14px;
   font-size: 0.72rem;
   white-space: nowrap;
+  color: #5f6368;
 }
 
 .app-mockup_body {
@@ -168,17 +182,21 @@ const memeCards = [
 
 .tag-purple {
   background: rgba(var(--bs-primary-rgb), 0.15);
-  color: var(--brand-purple);
+  color: #5b47c7;
 }
 
 .tag-green {
   background: #d1fae5;
-  color: #059669;
+  color: #047857;
 }
 
 .tag-pink {
   background: #fce7f3;
-  color: #db2777;
+  color: #be185d;
+}
+
+.mockup-card_footer .text-muted {
+  color: #5f6368 !important;
 }
 
 .mockup-card_footer {

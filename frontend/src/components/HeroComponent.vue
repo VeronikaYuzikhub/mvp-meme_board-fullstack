@@ -13,13 +13,15 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
     <div class="container position-relative hero-content">
       <div class="row align-items-lg-center align-items-start pt-lg-2">
         <div class="col-lg-6">
-            <h1 class="display-4 hero-title fw-bold mb-0">Share memes,</h1>
-            <h1 class="display-4 hero-title fw-bold mb-0 hero-accent">without the mess</h1>
+            <h1 class="display-4 hero-title fw-bold mb-0">
+              Share memes,<br />
+              <span class="hero-accent">without the mess</span>
+            </h1>
             <p class="text-muted lead mt-3 mb-4">
               Create, discover, and share memes with your friends and the world.
             </p>
             <div class="d-flex flex-wrap gap-3">
-              <router-link class="nav-link btn btn-meme btn-lg d-inline-flex align-items-center" aria-current="page" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
+              <router-link class="nav-link btn btn-meme btn-lg d-inline-flex align-items-center" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
               <router-link class="btn btn-lg hero-btn-outline d-inline-flex align-items-center" to="/about">
                 <svg class="hero-info-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/>
@@ -60,16 +62,16 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
 
 .hero-btn-outline {
   background: var(--hero-bg);
-  border: 2px solid var(--brand-purple);
-  color: var(--brand-purple);
+  border: 2px solid var(--brand-purple-strong);
+  color: var(--brand-purple-strong);
   border-radius: 8px;
   padding: 0.6rem 1.25rem;
   font-weight: 500;
 }
 
 .hero-btn-outline:hover {
-  background-color: var(--brand-purple);
-  border-color: var(--brand-purple);
+  background-color: var(--brand-purple-strong);
+  border-color: var(--brand-purple-strong);
   color: var(--hero-bg);
 }
 

@@ -43,17 +43,17 @@ export default {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mx-auto text-center align-items-center w-100 mb-2 mb-lg-0 me-lg-auto mx-lg-0 ms-lg-3 text-lg-start w-lg-auto">
           <li class="nav-item">
-            <router-link class="nav-link" aria-current="page" to="/home">Home</router-link>
+            <router-link class="nav-link" to="/home">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" aria-current="page" to="/myMemes">MyMemes</router-link>
+            <router-link class="nav-link" to="/myMemes">MyMemes</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" aria-current="page" to="/about">About</router-link>
+            <router-link class="nav-link" to="/about">About</router-link>
           </li>
         </ul>
         <div class="d-lg-none d-flex flex-column align-items-center gap-2 pb-3">
-          <router-link v-if="isAuthenticated" class="btn btn-meme burger-btn" aria-current="page" to="/addMeme">
+          <router-link v-if="isAuthenticated" class="btn btn-meme burger-btn" to="/addMeme">
             <i class="fa-solid fa-plus me-2"></i>Add Meme
           </router-link>
           <button v-if="isAuthenticated" type="button" class="btn btn-meme burger-btn d-inline-flex align-items-center justify-content-center" @click="logout" >
