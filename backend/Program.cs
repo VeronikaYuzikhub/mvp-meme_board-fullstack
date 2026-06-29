@@ -343,7 +343,7 @@ app.MapPost("/memes/{id}/like", async (int id, AppDbContext db, ClaimsPrincipal 
     if (await db.Memes.FindAsync(id) is not Meme meme)
         return Results.NotFound();
 
-    if (await db.MemeLikes.AnyAsync(l => MemeLikeHelper.IsSameLike(id, userId, l)))
+    if (await db.MemeLikes.AnyAsync(l => l.MemeId == id && l.UserId == userId))
         return Results.NoContent();
 
     db.MemeLikes.Add(new MemeLike { UserId = userId, MemeId = id });
