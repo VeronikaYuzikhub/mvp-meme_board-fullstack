@@ -1,5 +1,5 @@
 # MVP Full-Stack застосунок Meme Board
-Навчальний проєкт з практики з конструювання ПЗ. Meme Board — це дошка мемів: можна зареєструватися, викладати картинки з підписом і категорією, дивитися стрічку, фільтрувати за категоріями і ставити лайки. Серверна частина — REST API на ASP.NET Core, клієнтська — окремий Vue-застосунок.
+Навчальний проєкт з практики з конструювання ПЗ. Meme Board - це дошка мемів: можна зареєструватися, викладати картинки з підписом і категорією, дивитися стрічку, фільтрувати за категоріями і ставити лайки. Серверна частина - REST API на ASP.NET Core, клієнтська - окремий Vue-застосунок.
 
 ## Опис
 Застосунок реалізує облік основної сутності предметної області (Meme) з повним циклом CRUD, реєстрацією та авторизацією користувача за схемою OAuth 2.0 (JWT Bearer). Дані зберігаються в SQLite через Entity Framework Core. Картинки мемів передаються як base64 і зберігаються в базі разом із записом мема.
@@ -20,33 +20,33 @@ Front-End працює як SPA (Single Page Application): маршрути `/ho
 ```
 mvp-meme_board-fullstack/
 ├── backend/
-│   ├── Program.cs                  — точка входу, реєстрація сервісів і ендпоінтів
+│   ├── Program.cs                  - точка входу, реєстрація сервісів і ендпоінтів
 │   ├── ExceptionHandlingMiddleware.cs
-│   ├── Models/                     — User, Meme, Category, MemeLike
-│   ├── Data/AppDbContext.cs        — контекст БД (EF Core)І
-│   ├── DTOs/                       — об'єкти для запитів і відповідей API
+│   ├── Models/                     - User, Meme, Category, MemeLike
+│   ├── Data/AppDbContext.cs        - контекст БД (EF Core)І
+│   ├── DTOs/                       - об'єкти для запитів і відповідей API
 │   ├── Services/
-│   │   ├── MemeLikeHelper.cs       — логіка лайків (для тестів)
-│   │   └── MemeValidator.cs        — перевірка довжини title/description
-│   ├── Migrations/                 — міграції SQLite
-│   ├── backend.Tests/              — unit-тести
-│   ├── appsettings.json            — рядок підключення, налаштування JWT
-│   └── memeboard.db                — файл бази даних
+│   │   ├── MemeLikeHelper.cs       - логіка лайків (для тестів)
+│   │   └── MemeValidator.cs        - перевірка довжини title/description
+│   ├── Migrations/                 - міграції SQLite
+│   ├── backend.Tests/              - unit-тести
+│   ├── appsettings.json            - рядок підключення, налаштування JWT
+│   └── memeboard.db                - файл бази даних
 │
 └── frontend/
     ├── src/
-    │   ├── main.js                 — вхід у застосунок
-    │   ├── router/index.js         — маршрути
-    │   ├── stores/auth.js          — стан авторизації
-    │   ├── interceptors/http.js    — Axios + JWT у заголовку
-    │   ├── composables/            — useMeme, useCategories тощо
-    │   ├── components/             — Nav, MemeFeed, AddMeme, Sidebar...
-    │   └── views/                  — HeroView, HomeView, AboutView...
+    │   ├── main.js                 - вхід у застосунок
+    │   ├── router/index.js         - маршрути
+    │   ├── stores/auth.js          - стан авторизації
+    │   ├── interceptors/http.js    - Axios + JWT у заголовку
+    │   ├── composables/            - useMeme, useCategories тощо
+    │   ├── components/             - Nav, MemeFeed, AddMeme, Sidebar...
+    │   └── views/                  - HeroView, HomeView, AboutView...
     ├── index.html
     └── package.json
 ```
 
-> Фронт у цьому проєкті — окремий Vue-проєкт у папці `frontend/`, а не статичні файли в `wwwroot`. Для роботи потрібно запускати бекенд і фронт у двох терміналах.
+> Фронт у цьому проєкті - окремий Vue-проєкт у папці `frontend/`, а не статичні файли в `wwwroot`. Для роботи потрібно запускати бекенд і фронт у двох терміналах.
 
 ## Ендпоінти REST API
 
@@ -109,4 +109,4 @@ dotnet test
 ```
 
 ## Автор
-Юзік Вероніка Євгенівна, група 3РП-10 — навчальна практика з конструювання програмного забезпечення
+Юзік Вероніка Євгенівна, група 3РП-10 - навчальна практика з конструювання програмного забезпечення
