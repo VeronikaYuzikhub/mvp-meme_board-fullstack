@@ -12,9 +12,14 @@ export default {
   },
   methods: {
     async loadCategories() {
-      const response = await api.get('/categories')
-      this.categories = response.data
-      this.loading = false
+      try {
+        const response = await api.get('/categories')
+        this.categories = response.data
+      } catch (error) {
+        console.error('Failed to load categories:', error)
+      } finally {
+        this.loading = false
+      }
     },
   },
 }
