@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(
                 "http://localhost:5173",
                 "http://localhost:4173",
-                "https://veronikayuzikhub.github.io");
+                "https://veronikayuzikhub.github.io"); //для хостингу
         }
 
         policy.AllowAnyHeader().AllowAnyMethod();
