@@ -140,7 +140,6 @@ const memeCards = [
 .mockup-card_img {
   position: relative;
   height: 190px;
-  weight: 75px;
   margin-bottom: 8px;
   display: flex;
   align-items: flex-end;
@@ -202,5 +201,21 @@ const memeCards = [
 .mockup-card_footer {
   margin-top: 8px;
   padding: 0 2px;
+}
+
+@media (max-width: 575.98px) {
+  .mockup-card_img {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .mockup-card_caption {
+    font-size: 0.38rem;
+  }
+
+  .mockup-tag {
+    font-size: 0.55rem;
+    padding: 1px 6px;
+  }
 }
 </style>

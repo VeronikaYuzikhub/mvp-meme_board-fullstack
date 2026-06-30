@@ -20,9 +20,9 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
             <p class="text-muted lead mt-3 mb-4">
               Create, discover, and share memes with your friends and the world.
             </p>
-            <div class="d-flex flex-wrap gap-3">
-              <router-link class="nav-link btn btn-meme btn-lg d-inline-flex align-items-center" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
-              <router-link class="btn btn-lg hero-btn-outline d-inline-flex align-items-center" to="/about">
+            <div class="d-flex flex-wrap gap-3 hero-actions">
+              <router-link class="btn btn-meme btn-lg hero-btn d-inline-flex align-items-center" to="/home"><i class="fa-solid fa-rocket me-2"></i>Explore memes</router-link>
+              <router-link class="btn btn-lg hero-btn hero-btn-outline d-inline-flex align-items-center" to="/about">
                 <svg class="hero-info-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/>
                   <circle cx="12" cy="8" r="0.75" fill="currentColor"/>
@@ -33,7 +33,7 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
             </div>
         </div>
 
-        <div class="col-lg-6 mt-5 mt-lg-0">
+        <div class="col-lg-6 hero-mockup-col">
           <MockupComponent />
         </div>
       </div>
@@ -60,13 +60,22 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
   line-height: 1.15;
 }
 
+.hero-btn {
+  min-height: 48px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+}
+
+.hero-btn.btn-meme {
+  padding: 0.5rem 1.25rem;
+}
+
 .hero-btn-outline {
   background: var(--hero-bg);
   border: 2px solid var(--brand-purple-strong);
   color: var(--brand-purple-strong);
   border-radius: 8px;
-  padding: 0.6rem 1.25rem;
-  font-weight: 500;
+  padding: calc(0.5rem - 1px) calc(1.25rem - 1px);
 }
 
 .hero-btn-outline:hover {
@@ -79,6 +88,16 @@ const dots = Array.from({ length: 16 }, (_, i) => i)
   width: 1.1rem;
   height: 1.1rem;
   flex-shrink: 0;
+}
+
+.hero-mockup-col {
+  margin-top: 6.5rem;
+}
+
+@media (min-width: 992px) {
+  .hero-mockup-col {
+    margin-top: 0;
+  }
 }
 
 .blob {
